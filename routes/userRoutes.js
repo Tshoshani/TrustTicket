@@ -1,19 +1,28 @@
-// routes/userRoutes.js
+/**
+ * routes/userRoutes.js — Defines all REST endpoints for the Users resource.
+ * Each route maps an HTTP method + path to a controller function.
+ * Protected routes use the authorize() middleware to enforce role-based access.
+ *
+ * Base path: /users (mounted in server.js)
+ */
 const express = require('express');
-const router = express.Router();
-const userController = require('../controllers/userController');
-const authorize = require('../middleware/auth');
+const router = express.Router(); // Create a modular route handler
+const userController = require('../controllers/userController'); // Handler logic for each endpoint
+const authorize = require('../middleware/auth'); // Role-check middleware
 
-// GET /api/users - Get all users (Allowed for admin and manager)
+// GET /users — Return a list of all users (restricted to admin and manager roles)
 router.get('/', authorize(['admin', 'manager']), userController.getAllUsers);
 
-// GET /api/users/:id - Get user by ID (Allowed for everyone)
+// GET /users/:id — Return a single user by their numeric ID (no role restriction)
 router.get('/:id', userController.getUserById);
 
-// POST /api/users - Create a new user (Allowed for admin)
+// POST /users — Create a new user record (admin only)
 router.post('/', authorize(['admin']), userController.createUser);
 
-// DELETE /api/users/:id - Delete a user (Allowed for admin only)[cite: 15]
+// PUT /users/:id — Update all fields of an existing user (admin and manager only)
+router.put('/:id', authorize(['admin', 'manager']), userController.updateUser);
+
+// DELETE /users/:id — Permanently remove a user (admin only)
 router.delete('/:id', authorize(['admin']), userController.deleteUser);
 
 module.exports = router;

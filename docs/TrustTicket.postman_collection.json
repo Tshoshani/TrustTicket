@@ -1,0 +1,312 @@
+{
+  "info": {
+    "name": "TrustTicket API",
+    "_postman_id": "trustticket-api-collection",
+    "description": "Full CRUD API for TrustTicket - a secure ticket resale marketplace.\n\nSet the x-user-role header to simulate authentication:\n- admin: full access\n- manager: read/update users\n- user: read own profile, create/update tickets",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "1"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/999",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "999"]
+            }
+          }
+        },
+        {
+          "name": "Get User by ID - Invalid ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/abc",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "abc"]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Yael\",\n  \"lastName\": \"Mizrahi\",\n  \"userRole\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Create User - Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Yael\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Shai\",\n  \"lastName\": \"Silberschmidt\",\n  \"userRole\": \"manager\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "5"]
+            }
+          }
+        },
+        {
+          "name": "Delete User - Forbidden",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "5"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"]
+            }
+          }
+        },
+        {
+          "name": "Get Tickets - Filter by eventType",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?eventType=Concert",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"],
+              "query": [
+                { "key": "eventType", "value": "Concert" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Tickets - Filter by status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?status=available",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"],
+              "query": [
+                { "key": "status", "value": "available" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Ticket by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "101"]
+            }
+          }
+        },
+        {
+          "name": "Get Ticket by ID - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/999",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "999"]
+            }
+          }
+        },
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventName\": \"Static & Ben El Concert\",\n  \"eventType\": \"Concert\",\n  \"eventDate\": \"2026-11-15\",\n  \"venue\": \"Caesarea Amphitheatre\",\n  \"barcode\": \"NEW123456\",\n  \"originalPrice\": 300,\n  \"salePrice\": 350,\n  \"sellerId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"]
+            }
+          }
+        },
+        {
+          "name": "Create Ticket - Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"Concert\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets"]
+            }
+          }
+        },
+        {
+          "name": "Update Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"salePrice\": 280,\n  \"status\": \"available\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "101"]
+            }
+          }
+        },
+        {
+          "name": "Delete Ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/103",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "103"]
+            }
+          }
+        },
+        {
+          "name": "Delete Ticket - Forbidden",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/103",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "103"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
