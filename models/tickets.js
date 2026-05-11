@@ -1,21 +1,21 @@
 /**
- * models/tickets.js — In-memory mock data for the Tickets resource.
+ * models/tickets.js - In-memory mock data for the Tickets resource.
  * This array acts as a simple database. All changes (create, update, delete)
  * happen in-memory and are lost when the server restarts.
  *
  * Ticket fields:
- *   ticketId      — Unique numeric identifier (auto-generated, starts at 101)
- *   eventName     — Name/title of the event
- *   eventType     — Category: "Concert", "Party", "Standup", "Sports", "Festival"
- *   eventDate     — Date of the event (YYYY-MM-DD)
- *   venue         — Location/venue name
- *   barcode       — The ticket's unique barcode string
- *   originalPrice — The price the seller originally paid
- *   salePrice     — The resale price listed by the seller
- *   sellerId      — userId of the seller who listed this ticket
- *   status        — "available" or "sold"
- *   createDate    — ISO timestamp of when the listing was created
- *   updateDate    — ISO timestamp of the last update
+ *   ticketId      - Unique numeric identifier (auto-generated, starts at 101)
+ *   eventName     - Name/title of the event
+ *   eventType     - Category: "Concert", "Party", "Standup", "Sports", "Festival"
+ *   eventDate     - Date of the event (YYYY-MM-DD)
+ *   venue         - Location/venue name
+ *   barcode       - The ticket's unique barcode string
+ *   originalPrice - The price the seller originally paid
+ *   salePrice     - The resale price listed by the seller
+ *   sellerId      - userId of the seller who listed this ticket
+ *   status        - "available" or "sold"
+ *   createDate    - ISO timestamp of when the listing was created
+ *   updateDate    - ISO timestamp of the last update
  */
 const tickets = [
   {

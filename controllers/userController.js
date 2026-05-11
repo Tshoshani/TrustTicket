@@ -1,5 +1,5 @@
 /**
- * controllers/userController.js — Business logic for User endpoints.
+ * controllers/userController.js - Business logic for User endpoints.
  * Each method handles one route action (get all, get by ID, create, update, delete).
  * All responses follow the standard format: { success, data, error }.
  */
@@ -110,7 +110,7 @@ const userController = {
       });
     }
 
-    // Validate the update body — all fields are required for a full update (PUT)
+    // Validate the update body - all fields are required for a full update (PUT)
     const { firstName, lastName, userRole } = req.body;
     if (!firstName || !lastName || !userRole) {
       const missing = [];

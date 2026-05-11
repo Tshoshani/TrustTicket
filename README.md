@@ -26,6 +26,7 @@ npm start
 - IDs are auto-generated using `Math.max(existingIds) + 1` to avoid duplicates after deletions.
 - Ticket IDs start at 101, User IDs start at 1.
 - Authentication is simulated via the `x-user-role` header (no real login system). Set it to `admin`, `manager`, or `user`.
+- Transactions simulate the TrustTicket escrow flow with mock fields only. There are no real payments, escrow providers, or external services.
 - Data resets on server restart (in-memory only).
 
 ---
@@ -61,9 +62,25 @@ All responses follow a consistent JSON format:
 Set the `x-user-role` header on requests to simulate roles:
 | Role      | Permissions |
 |-----------|-------------|
-| `admin`   | Full access (CRUD on all resources) |
+| `admin`   | Full access (CRUD on users, tickets, and transactions) |
 | `manager` | Read all users, update users |
-| `user`    | Read own profile, create/update tickets |
+| `user`    | Browse tickets, create/update tickets, create/read transactions, view dashboards |
+
+---
+
+## Root API
+
+### GET /
+Returns a simple welcome response. No role restriction.
+
+**Response:** `200 OK`
+```json
+{
+  "success": true,
+  "data": { "message": "Welcome to Trust Ticket API" },
+  "error": null
+}
+```
 
 ---
 
@@ -262,6 +279,173 @@ Deletes a ticket. Requires role: `admin`.
 
 ---
 
+## Transactions API
+
+Transactions represent a simulated TrustTicket escrow flow. A transaction connects a buyer, seller, and ticket, then tracks whether the ticket was released and whether the escrow-like process is still open or completed. This is mock data only; it does not process real payments.
+
+### GET /transactions
+Returns all transactions. Requires role: `admin` or `user`.
+
+**Response:** `200 OK`
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "transactionId": 1001,
+      "ticketId": 105,
+      "buyerId": 4,
+      "sellerId": 3,
+      "status": "completed",
+      "ticketReleased": true,
+      "buyerFee": 20,
+      "sellerFee": 12,
+      "totalPrice": 400,
+      "createDate": "2026-05-16T10:00:00Z",
+      "updateDate": "2026-05-16T10:30:00Z"
+    }
+  ],
+  "error": null
+}
+```
+
+### GET /transactions/:id
+Returns a single transaction by ID. Requires role: `admin` or `user`.
+
+**Response:** `200 OK` or `404 Not Found`
+
+### POST /transactions
+Creates a new mock escrow transaction. Requires role: `admin` or `user`.
+
+**Request body:**
+```json
+{
+  "ticketId": 101,
+  "buyerId": 5,
+  "sellerId": 2,
+  "totalPrice": 250
+}
+```
+
+**Required fields:** `ticketId`, `buyerId`, `sellerId`, `totalPrice`
+
+**Response:** `201 Created`
+```json
+{
+  "success": true,
+  "data": { "transactionId": 1004 },
+  "error": null
+}
+```
+
+**Validation error:** `400 Bad Request`
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Missing required field(s): buyerId, sellerId, totalPrice",
+    "details": { "missing": ["buyerId", "sellerId", "totalPrice"] }
+  }
+}
+```
+
+### PUT /transactions/:id
+Updates an existing transaction. Requires role: `admin`.
+
+**Request body:**
+```json
+{
+  "status": "completed",
+  "ticketReleased": true
+}
+```
+
+**Response:** `200 OK`
+```json
+{
+  "success": true,
+  "data": { "transactionId": 1002 },
+  "error": null
+}
+```
+
+**Forbidden error:** `403 Forbidden`
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "FORBIDDEN",
+    "message": "You do not have permission to perform this action.",
+    "details": { "requiredRoles": ["admin"], "yourRole": "user" }
+  }
+}
+```
+
+### DELETE /transactions/:id
+Deletes a transaction. Requires role: `admin`.
+
+**Response:** `200 OK`
+```json
+{
+  "success": true,
+  "data": { "transactionId": 1003 },
+  "error": null
+}
+```
+
+---
+
+## Dashboard API
+
+### GET /dashboard/:userId
+Returns a personal dashboard for a user. Requires role: `admin` or `user`.
+
+The dashboard combines mock user, ticket, and transaction data:
+- `activeListings`
+- `openTransactions`
+- `purchaseHistory`
+- `salesHistory`
+- `pendingEscrowBalance`
+- `releasedEarnings`
+- `successfulTransactions`
+- `rating`, if the user mock data includes one
+
+**Response:** `200 OK`
+```json
+{
+  "success": true,
+  "data": {
+    "userId": 1,
+    "activeListings": [],
+    "openTransactions": [],
+    "purchaseHistory": [],
+    "salesHistory": [],
+    "pendingEscrowBalance": 0,
+    "releasedEarnings": 0,
+    "successfulTransactions": 0
+  },
+  "error": null
+}
+```
+
+**Not found error:** `404 Not Found`
+```json
+{
+  "success": false,
+  "data": null,
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "User with ID 999 not found",
+    "details": {}
+  }
+}
+```
+
+---
+
 ## Error Codes
 
 | Code               | Status | Description |
@@ -276,4 +460,4 @@ Deletes a ticket. Requires role: `admin`.
 ## Postman Collection
 
 Import the file `docs/TrustTicket.postman_collection.json` into Postman to test all endpoints.
-The collection is organized into two folders: **Users** and **Tickets**.
+The collection is organized into **General**, **Users**, **Tickets**, **Transactions**, and **Dashboard** folders.

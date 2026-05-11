@@ -1,5 +1,5 @@
 /**
- * middleware/logger.js — Request logging middleware.
+ * middleware/logger.js - Request logging middleware.
  * Applied globally in server.js so it runs on every incoming request.
  * Logs: timestamp, HTTP method, URL path, response status code, and duration.
  * Uses the 'finish' event on the response object to capture the status code

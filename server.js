@@ -1,5 +1,5 @@
 /**
- * server.js — Main entry point for the TrustTicket backend API.
+ * server.js - Main entry point for the TrustTicket backend API.
  * Sets up Express, registers global middleware, mounts route handlers,
  * and starts listening on the configured port.
  */
@@ -13,23 +13,29 @@ const logger = require('./middleware/logger'); // Logs every incoming request (m
 // Import route modules (each handles a specific resource)
 const userRoutes = require('./routes/userRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 
-// Server configuration — the port the API will listen on
+// Server configuration - the port the API will listen on
 const PORT = 3000;
 
-// ——— Global Middleware ———
+// Global Middleware
 // express.json() parses incoming JSON request bodies so we can access req.body
 app.use(express.json());
 // Logger middleware runs on every request and prints request info to the console
 app.use(logger);
 
-// ——— API Route Mounting ———
+// API Route Mounting
 // All user-related endpoints are handled under /users
 app.use('/users', userRoutes);
 // All ticket-related endpoints are handled under /tickets
 app.use('/tickets', ticketRoutes);
+// All transaction-related endpoints are handled under /transactions
+app.use('/transactions', transactionRoutes);
+// User dashboard summaries are handled under /dashboard
+app.use('/dashboard', dashboardRoutes);
 
-// Root route — simple health-check to verify the server is running
+// Root route - simple health-check to verify the server is running
 app.get('/', (req, res) => {
     res.json({
         success: true,

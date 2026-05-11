@@ -1,15 +1,15 @@
 /**
- * models/users.js — In-memory mock data for the Users resource.
+ * models/users.js - In-memory mock data for the Users resource.
  * This array acts as a simple database. All changes (create, update, delete)
  * happen in-memory and are lost when the server restarts.
  *
  * User fields:
- *   userId     — Unique numeric identifier (auto-generated on creation)
- *   firstName  — User's first name
- *   lastName   — User's last name
- *   createDate — ISO timestamp of when the user was created
- *   updateDate — ISO timestamp of the last update
- *   userRole   — One of: "admin", "manager", "user" (used for authorization)
+ *   userId     - Unique numeric identifier (auto-generated on creation)
+ *   firstName  - User's first name
+ *   lastName   - User's last name
+ *   createDate - ISO timestamp of when the user was created
+ *   updateDate - ISO timestamp of the last update
+ *   userRole   - One of: "admin", "manager", "user" (used for authorization)
  */
 const users = [
   {

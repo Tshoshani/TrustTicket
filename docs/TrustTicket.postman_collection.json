@@ -2,7 +2,7 @@
   "info": {
     "name": "TrustTicket API",
     "_postman_id": "trustticket-api-collection",
-    "description": "Full CRUD API for TrustTicket - a secure ticket resale marketplace.\n\nSet the x-user-role header to simulate authentication:\n- admin: full access\n- manager: read/update users\n- user: read own profile, create/update tickets",
+    "description": "Full CRUD API for TrustTicket - a secure ticket resale marketplace.\n\nSet the x-user-role header to simulate authentication:\n- admin: full access\n- manager: read/update users\n- user: create/update tickets, create/read transactions, view dashboards",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -12,6 +12,23 @@
     }
   ],
   "item": [
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "Get Root",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": []
+            }
+          }
+        }
+      ]
+    },
     {
       "name": "Users",
       "item": [
@@ -303,6 +320,202 @@
               "raw": "{{baseUrl}}/tickets/103",
               "host": ["{{baseUrl}}"],
               "path": ["tickets", "103"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions"]
+            }
+          }
+        },
+        {
+          "name": "Get Transaction by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1001",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "1001"]
+            }
+          }
+        },
+        {
+          "name": "Get Transaction by ID - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "9999"]
+            }
+          }
+        },
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticketId\": 101,\n  \"buyerId\": 5,\n  \"sellerId\": 2,\n  \"totalPrice\": 250\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions"]
+            }
+          }
+        },
+        {
+          "name": "Create Transaction - Validation Error",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticketId\": 101\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions"]
+            }
+          }
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\",\n  \"ticketReleased\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1002",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "1002"]
+            }
+          }
+        },
+        {
+          "name": "Update Transaction - Forbidden",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1002",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "1002"]
+            }
+          }
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1003",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "1003"]
+            }
+          }
+        },
+        {
+          "name": "Delete Transaction - Forbidden",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1003",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "1003"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard by User ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "2"]
+            }
+          }
+        },
+        {
+          "name": "Get Dashboard - Not Found",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/999",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "999"]
+            }
+          }
+        },
+        {
+          "name": "Get Dashboard - Forbidden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["dashboard", "2"]
             }
           }
         }

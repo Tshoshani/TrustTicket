@@ -1,5 +1,5 @@
 /**
- * controllers/ticketController.js — Business logic for Ticket endpoints.
+ * controllers/ticketController.js - Business logic for Ticket endpoints.
  * Handles CRUD operations for event tickets in the TrustTicket marketplace.
  * All responses follow the standard format: { success, data, error }.
  */
@@ -13,8 +13,8 @@ const ticketController = {
      * GET /tickets
      * Returns all tickets, with optional filtering via query parameters.
      * Supported filters:
-     *   ?eventType=Concert  — filter by event category (case-insensitive)
-     *   ?status=available    — filter by ticket status (case-insensitive)
+     *   ?eventType=Concert  - filter by event category (case-insensitive)
+     *   ?status=available    - filter by ticket status (case-insensitive)
      * Filters can be combined: ?eventType=Concert&status=available
      */
     getAllTickets: (req, res) => {
@@ -93,9 +93,9 @@ const ticketController = {
             eventName,
             eventType,
             eventDate,
-            venue: venue || null,             // Optional — defaults to null if not provided
+            venue: venue || null,             // Optional - defaults to null if not provided
             barcode,
-            originalPrice: originalPrice || null, // Optional — the original purchase price
+            originalPrice: originalPrice || null, // Optional - the original purchase price
             salePrice,                         // The resale price set by the seller
             sellerId,                          // ID of the user listing the ticket
             status: "available",               // New listings always start as "available"
