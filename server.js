@@ -44,6 +44,19 @@ app.get('/', (req, res) => {
     });
 });
 
+// Catch-all route for unknown endpoints
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        data: null,
+        error: {
+            code: "NOT_FOUND",
+            message: "Route not found",
+            details: {}
+        }
+    });
+});
+
 /**
  * Global Error Handling Middleware.
  * Express calls this when next(err) is invoked or an unhandled error occurs.

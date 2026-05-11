@@ -89,10 +89,12 @@ const transactionController = {
 
     /**
      * PUT /transactions/:id
-     * Updates an existing mock transaction with provided fields.
+     * Updates an existing mock transaction.
+     * Required fields: ticketId, buyerId, sellerId, totalPrice, status, ticketReleased.
      */
     updateTransaction: (req, res) => {
         const id = parseInt(req.params.id);
+        const body = req.body || {};
 
         if (isNaN(id)) {
             return res.status(400).json({
@@ -109,7 +111,16 @@ const transactionController = {
             });
         }
 
-        transactions[index] = { ...transactions[index], ...req.body, updateDate: new Date().toISOString() };
+        const requiredFields = ["ticketId", "buyerId", "sellerId", "totalPrice", "status", "ticketReleased"];
+        const missing = getMissingFields(body, requiredFields);
+        if (missing.length > 0) {
+            return res.status(400).json({
+                success: false, data: null,
+                error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
+            });
+        }
+
+        transactions[index] = { ...transactions[index], ...body, updateDate: new Date().toISOString() };
         res.status(200).json({ success: true, data: { transactionId: id }, error: null });
     },
 

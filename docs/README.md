@@ -254,7 +254,22 @@ Creates a new ticket listing. Requires role: `user` or `admin`.
 ### PUT /tickets/:id
 Updates a ticket. Requires role: `user` or `admin`.
 
-**Request body:** any ticket fields to update.
+**Request body:**
+```json
+{
+  "eventName": "Omer Adam Live",
+  "eventType": "Concert",
+  "eventDate": "2026-07-20",
+  "venue": "Bloomfield Stadium, Tel Aviv",
+  "barcode": "XYZ123456",
+  "originalPrice": 220,
+  "salePrice": 280,
+  "sellerId": 2,
+  "status": "available"
+}
+```
+
+**Required fields:** `eventName`, `eventType`, `eventDate`, `barcode`, `salePrice`, `sellerId`
 
 **Response:** `200 OK`
 ```json
@@ -357,10 +372,16 @@ Updates an existing transaction. Requires role: `admin`.
 **Request body:**
 ```json
 {
+  "ticketId": 101,
+  "buyerId": 5,
+  "sellerId": 2,
+  "totalPrice": 250,
   "status": "completed",
   "ticketReleased": true
 }
 ```
+
+**Required fields:** `ticketId`, `buyerId`, `sellerId`, `totalPrice`, `status`, `ticketReleased`
 
 **Response:** `200 OK`
 ```json

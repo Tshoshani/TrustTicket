@@ -7,6 +7,10 @@
 // Import the in-memory tickets array (mock database)
 let tickets = require('../models/tickets');
 
+function getMissingFields(body, requiredFields) {
+    return requiredFields.filter(field => body[field] === undefined || body[field] === null || body[field] === "");
+}
+
 const ticketController = {
 
     /**
@@ -109,12 +113,13 @@ const ticketController = {
 
     /**
      * PUT /tickets/:id
-     * Updates an existing ticket's fields with values from the request body.
-     * Uses spread operator to merge: existing fields are kept, provided fields are overwritten.
+     * Updates an existing ticket's core fields with values from the request body.
+     * Required fields: eventName, eventType, eventDate, barcode, salePrice, sellerId.
      * The updateDate is automatically refreshed.
      */
     updateTicket: (req, res) => {
         const id = parseInt(req.params.id);
+        const body = req.body || {};
 
         if (isNaN(id)) {
             return res.status(400).json({
@@ -131,9 +136,18 @@ const ticketController = {
             });
         }
 
-        // Spread the old ticket, then override with any new fields from req.body,
+        const requiredFields = ["eventName", "eventType", "eventDate", "barcode", "salePrice", "sellerId"];
+        const missing = getMissingFields(body, requiredFields);
+        if (missing.length > 0) {
+            return res.status(400).json({
+                success: false, data: null,
+                error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
+            });
+        }
+
+        // Spread the old ticket, then override with fields from req.body,
         // and always update the timestamp
-        tickets[index] = { ...tickets[index], ...req.body, updateDate: new Date().toISOString() };
+        tickets[index] = { ...tickets[index], ...body, updateDate: new Date().toISOString() };
         res.status(200).json({ success: true, data: { ticketId: id }, error: null });
     },
 

@@ -286,6 +286,25 @@
             ],
             "body": {
               "mode": "raw",
+              "raw": "{\n  \"eventName\": \"Omer Adam Live\",\n  \"eventType\": \"Concert\",\n  \"eventDate\": \"2026-07-20\",\n  \"venue\": \"Bloomfield Stadium, Tel Aviv\",\n  \"barcode\": \"XYZ123456\",\n  \"originalPrice\": 220,\n  \"salePrice\": 280,\n  \"sellerId\": 2,\n  \"status\": \"available\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101",
+              "host": ["{{baseUrl}}"],
+              "path": ["tickets", "101"]
+            }
+          }
+        },
+        {
+          "name": "Update Ticket - Validation Error",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "user" }
+            ],
+            "body": {
+              "mode": "raw",
               "raw": "{\n  \"salePrice\": 280,\n  \"status\": \"available\"\n}"
             },
             "url": {
@@ -410,6 +429,25 @@
         },
         {
           "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-user-role", "value": "admin" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticketId\": 101,\n  \"buyerId\": 5,\n  \"sellerId\": 2,\n  \"totalPrice\": 250,\n  \"status\": \"completed\",\n  \"ticketReleased\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1002",
+              "host": ["{{baseUrl}}"],
+              "path": ["transactions", "1002"]
+            }
+          }
+        },
+        {
+          "name": "Update Transaction - Validation Error",
           "request": {
             "method": "PUT",
             "header": [
