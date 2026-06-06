@@ -1,0 +1,232 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===========================================================================
+   Dark theme overrides.
+   Activated when <html data-theme="dark"> is set by utils/theme.js.
+   These rules restyle the main surfaces (backgrounds, text, inputs, tables,
+   cards, modal, settings) so the whole app switches to a dark palette.
+   =========================================================================== */
+[data-theme="dark"] body {
+  background-color: #15171c;
+  color: #e6e6e6;
+}
+
+/* Generic text/headings that were dark on white */
+[data-theme="dark"] .dashboard-header h1,
+[data-theme="dark"] .tickets-section h2,
+[data-theme="dark"] .settings-header h1,
+[data-theme="dark"] .settings-section h2,
+[data-theme="dark"] .settings-info h3,
+[data-theme="dark"] .settings-info h4,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] .modal-content h2,
+[data-theme="dark"] .modal-details strong,
+[data-theme="dark"] .filter-section label,
+[data-theme="dark"] .form-group label {
+  color: #f0f0f0;
+}
+
+[data-theme="dark"] .dashboard-header p,
+[data-theme="dark"] .settings-header p,
+[data-theme="dark"] .settings-info p,
+[data-theme="dark"] .settings-info li,
+[data-theme="dark"] .card-text,
+[data-theme="dark"] .stat-card h3 {
+  color: #b5b5b5;
+}
+
+/* White card-like surfaces -> dark panels */
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .card,
+[data-theme="dark"] .settings-form,
+[data-theme="dark"] .settings-info,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .toggle-btn,
+[data-theme="dark"] table {
+  background-color: #21252e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Section dividers */
+[data-theme="dark"] .settings-section,
+[data-theme="dark"] .form-actions {
+  border-color: #3a3f4a;
+}
+
+/* Inputs and selects */
+[data-theme="dark"] .form-group input,
+[data-theme="dark"] .form-group select,
+[data-theme="dark"] .filter-section select {
+  background-color: #1a1d24;
+  border-color: #3a3f4a;
+  color: #e6e6e6;
+}
+
+[data-theme="dark"] .disabled-input {
+  background-color: #2b2f38;
+  color: #9aa0aa;
+}
+
+[data-theme="dark"] .form-group small {
+  color: #888f99;
+}
+
+/* Tables */
+[data-theme="dark"] th,
+[data-theme="dark"] td {
+  border-color: #3a3f4a;
+  color: #e6e6e6;
+}
+
+[data-theme="dark"] tbody tr:hover {
+  background-color: #2c313b;
+}
+
+[data-theme="dark"] tbody tr:nth-child(even) {
+  background-color: #262a33;
+}
+
+/* Modal detail rows */
+[data-theme="dark"] .modal-details p {
+  background-color: #2b2f38;
+  color: #e6e6e6;
+}
+
+/* Toggle button (inactive) text */
+[data-theme="dark"] .toggle-btn {
+  color: #e6e6e6;
+  border-color: #3a3f4a;
+}
+
+[data-theme="dark"] .toggle-btn:hover {
+  background-color: #2c313b;
+}
+
+[data-theme="dark"] .loading {
+  color: #b5b5b5;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 18px;
+  color: #666;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #282c34;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  list-style: none;
+}
+
+.navbar-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.navbar-menu a:hover {
+  color: #61dafb;
+}
+
+.navbar-user {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.logout-btn {
+  background-color: #ff6b6b;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+  background-color: #ff5252;
+}
+
+/* Footer */
+.footer {
+  background-color: #282c34;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+.footer p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .navbar-menu {
+    gap: 15px;
+  }
+
+  .main-content {
+    padding: 10px;
+  }
+}

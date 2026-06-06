@@ -1,0 +1,228 @@
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #282c34;
+  margin: 0;
+}
+
+.card-badge {
+  display: inline-block;
+  background-color: #61dafb;
+  color: #282c34;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 10px 0;
+}
+
+.card-detail {
+  margin: 10px 0;
+  font-size: 14px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.card-detail strong {
+  color: #282c34;
+  font-weight: 600;
+}
+
+.card-price {
+  margin: 15px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #51cf66;
+}
+
+.card-status {
+  margin: 15px 0;
+  font-size: 14px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-available {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-sold,
+.status-completed {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-reserved {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+/* Seller + trust rating block */
+.card-seller {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+  padding: 10px;
+  background-color: #f7f9fc;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.seller-name {
+  font-weight: 600;
+  color: #282c34;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verified-badge {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.trust-rating {
+  color: #b8860b;
+  font-weight: 600;
+}
+
+.deals-count {
+  color: #888;
+  font-weight: 400;
+}
+
+.ai-badge {
+  background-color: #e7f1ff;
+  color: #0b5ed7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Action button variants */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.card-actions .card-action-btn {
+  margin-top: 0;
+}
+
+.btn-verify {
+  background-color: #ffd43b;
+  color: #5c4400;
+}
+
+.btn-verify:hover {
+  background-color: #fcc419;
+}
+
+.btn-buy {
+  background-color: #51cf66;
+  color: white;
+}
+
+.btn-buy:hover {
+  background-color: #40c057;
+}
+
+.btn-redeem {
+  background-color: #845ef7;
+  color: white;
+}
+
+.btn-redeem:hover {
+  background-color: #7048e8;
+}
+
+/* Dark theme for seller block */
+[data-theme="dark"] .card-seller {
+  background-color: #1a1d24;
+}
+
+[data-theme="dark"] .seller-name {
+  color: #f0f0f0;
+}
+
+.card-action-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background-color: #61dafb;
+  color: #282c34;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.card-action-btn:hover {
+  background-color: #4fa8d5;
+  transform: scale(1.02);
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 15px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .card-detail {
+    font-size: 13px;
+  }
+}
