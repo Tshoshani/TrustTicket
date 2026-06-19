@@ -120,6 +120,13 @@
   margin-left: 32px;
 }
 
+.field-error {
+  display: block;
+  color: #c33;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
 .error-message {
   background-color: #fee;
   color: #c33;

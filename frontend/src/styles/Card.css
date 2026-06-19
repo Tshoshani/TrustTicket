@@ -82,7 +82,8 @@
   color: #155724;
 }
 
-.status-sold {
+.status-sold,
+.status-completed {
   background-color: #f8d7da;
   color: #721c24;
 }
@@ -90,6 +91,107 @@
 .status-pending {
   background-color: #fff3cd;
   color: #856404;
+}
+
+.status-reserved {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+/* Seller + trust rating block */
+.card-seller {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 12px 0;
+  padding: 10px;
+  background-color: #f7f9fc;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.seller-name {
+  font-weight: 600;
+  color: #282c34;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.verified-badge {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.trust-rating {
+  color: #b8860b;
+  font-weight: 600;
+}
+
+.deals-count {
+  color: #888;
+  font-weight: 400;
+}
+
+.ai-badge {
+  background-color: #e7f1ff;
+  color: #0b5ed7;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Action button variants */
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.card-actions .card-action-btn {
+  margin-top: 0;
+}
+
+.btn-verify {
+  background-color: #ffd43b;
+  color: #5c4400;
+}
+
+.btn-verify:hover {
+  background-color: #fcc419;
+}
+
+.btn-buy {
+  background-color: #51cf66;
+  color: white;
+}
+
+.btn-buy:hover {
+  background-color: #40c057;
+}
+
+.btn-redeem {
+  background-color: #845ef7;
+  color: white;
+}
+
+.btn-redeem:hover {
+  background-color: #7048e8;
+}
+
+/* Dark theme for seller block */
+[data-theme="dark"] .card-seller {
+  background-color: #1a1d24;
+}
+
+[data-theme="dark"] .seller-name {
+  color: #f0f0f0;
 }
 
 .card-action-btn {

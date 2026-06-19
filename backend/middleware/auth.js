@@ -35,4 +35,43 @@ function authorize(allowedRoles) {
   };
 }
 
+/**
+ * authorize.selfOrRoles(allowedRoles) - "Self update" authorization.
+ *
+ * Allows the request if EITHER:
+ *   1. The caller's role (x-user-role) is in allowedRoles (e.g., admin/manager), OR
+ *   2. The caller is editing their OWN record - i.e. the "x-user-id" header
+ *      matches the ":id" route parameter.
+ *
+ * This lets a regular "user" update their own profile (PUT /users/:id where
+ * :id is their own id) while still letting admins/managers update anyone.
+ *
+ * Usage:
+ *   router.put('/:id', authorize.selfOrRoles(['admin', 'manager']), controller.update);
+ */
+authorize.selfOrRoles = function (allowedRoles) {
+  return (req, res, next) => {
+    const userRole = req.headers['x-user-role'];
+    const callerId = parseInt(req.headers['x-user-id']);
+    const targetId = parseInt(req.params.id);
+
+    const isPrivileged = allowedRoles.includes(userRole);
+    const isSelf = !isNaN(callerId) && !isNaN(targetId) && callerId === targetId;
+
+    if (isPrivileged || isSelf) {
+      next();
+    } else {
+      res.status(403).json({
+        success: false,
+        data: null,
+        error: {
+          code: "FORBIDDEN",
+          message: "You do not have permission to perform this action.",
+          details: { requiredRoles: allowedRoles, allowSelf: true, yourRole: userRole || "none" }
+        }
+      });
+    }
+  };
+};
+
 module.exports = authorize;

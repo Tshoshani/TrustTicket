@@ -17,6 +17,8 @@ src/
 │   └── Settings.js         # User settings page
 ├── services/               # API communication
 │   └── api.js              # API service with Fetch API
+├── utils/                  # Helpers
+│   └── theme.js            # Light/Dark/Auto theme application + persistence
 ├── styles/                 # Component-specific styles
 │   ├── Navbar.css
 │   ├── Footer.css
@@ -50,12 +52,20 @@ src/
 - Year and description
 - Displayed on all authenticated pages
 
-### 4. **Dashboard / Home Page** ✓
-- Main marketplace view
-- Ticket statistics (listings, available, purchases, sales)
-- Filter by event type
+### 4. **Dashboard / Home Page (Marketplace)** ✓
+- Main marketplace view with loading and empty states
+- Ticket statistics (available, your listings, purchases, sales)
+- **Search** by event name / venue and **filter by event type, date, and price range (min/max)**
 - Cards and table view toggle
-- Dynamic ticket display
+- **List a Ticket** form (modal) — sellers upload a ticket (event, date, venue, prices, barcode)
+- **Mock AI verification** — a newly uploaded ticket starts as `pending`; the seller runs the
+  "AI verification" check, which moves it to `available` and lists it for buyers
+- **Seller details + trust rating** shown on every card (name, ⭐ rating /5, number of deals, verified badge)
+- **Buy flow (escrow MVP)** — a buyer purchases a verified ticket; the ticket is "released" to the
+  buyer and money is held in escrow (`reserved`)
+- **Redeem flow** — when the barcode is "used", the sale completes; the seller is paid the sale price
+  minus a 2.5% seller fee, and the buyer is charged the price plus a 2.5% buyer fee (5% platform total).
+  No real money is moved — this is an MVP that implements the process.
 - Modal detail view for selected tickets
 
 ### 5. **Reusable Card Component** ✓
@@ -71,11 +81,13 @@ src/
 - Responsive design
 
 ### 7. **Settings Page** ✓
-- Theme preference (Light, Dark, Auto)
-- Language selection (EN, HE, ES, FR)
+- Theme preference (Light, Dark, Auto) — **actually re-themes the whole app** and persists across reloads
+- Language: **English only** (shown as a locked field, since translation is not implemented)
+- Editable account details: **Display Name** and **Username** (validated, min 2 chars) and optional **Phone**
+- Display Name updates propagate live to the Navbar and Dashboard greeting
+- **Email and User Role are read-only** (cannot be changed)
 - Notification settings
-- Account information display
-- Save and reset functionality
+- Save and reset functionality (loading / success / error states)
 - Project information section
 
 ## Tech Stack
@@ -97,7 +109,7 @@ src/
 
 1. **Navigate to the project directory:**
    ```bash
-   cd ~/Desktop/trustticket-frontend
+   cd TrustTicket/frontend
    ```
 
 2. **Install dependencies:**
@@ -117,7 +129,7 @@ src/
 npm start
 ```
 
-The application will automatically open at `http://localhost:3001`
+The application will automatically open at `http://localhost:5173`
 
 **Available Scripts:**
 ```bash
@@ -130,67 +142,79 @@ npm eject       # Ejects from create-react-app (irreversible)
 ## API Integration
 
 ### Base URL
-- **Local Development**: `http://localhost:3000`
-- The application uses `x-user-role` header for role-based access (admin, manager, user)
+- **Backend server**: `http://localhost:3000` (the Assignment 2 API)
+- **API base path**: `http://localhost:3000/api` — all endpoints below are served under `/api`
+- The frontend dev server runs on `http://localhost:5173` and calls the backend at the base URL above
+- The application uses `x-user-role` and `x-user-id` headers for the simulated auth / role-based access (admin, manager, user)
 
 ### Connected Endpoints
 
+#### Auth API
+- `POST /api/auth/login` - Log in with email + password (returns user + token)
+- `POST /api/auth/logout` - Log out the current session
+
 #### Users API
-- `GET /users/me` - Get current user info
-- `GET /users/:id` - Get user by ID
-- `POST /users` - Create new user
-- `PUT /users/:id` - Update user
-- `DELETE /users/:id` - Delete user
+- `GET /api/users/me` - Get current user info (via `x-user-id` header)
+- `GET /api/users/:id` - Get user by ID
+- `POST /api/users` - Create new user
+- `PUT /api/users/:id` - Update user
+- `DELETE /api/users/:id` - Delete user
 
 #### Tickets API
-- `GET /tickets` - Get all tickets (with filters)
-- `GET /tickets/:id` - Get ticket by ID
-- `POST /tickets` - Create new ticket
-- `PUT /tickets/:id` - Update ticket
-- `DELETE /tickets/:id` - Delete ticket
+- `GET /api/tickets` - Get all tickets. Filters: `?eventType=`, `?status=`, `?search=`, `?date=`, `?minPrice=`, `?maxPrice=`
+- `GET /api/tickets/:id` - Get ticket by ID
+- `POST /api/tickets` - Create a new ticket listing (starts as `pending`, unverified)
+- `PUT /api/tickets/:id` - Update ticket
+- `DELETE /api/tickets/:id` - Delete ticket (admin only)
+- `POST /api/tickets/:id/verify` - Run the mock AI verification (`pending` → `available`)
+- `POST /api/tickets/:id/purchase` - Buy a verified ticket (creates an escrow transaction, `available` → `reserved`)
+- `POST /api/tickets/:id/redeem` - Mark the barcode as used (`reserved` → `completed`, pays the seller)
 
 #### Transactions API
-- `GET /transactions` - Get all transactions
-- `GET /transactions/:id` - Get transaction by ID
-- `POST /transactions` - Create transaction
-- `PUT /transactions/:id` - Update transaction
-- `DELETE /transactions/:id` - Delete transaction
+- `GET /api/transactions` - Get all transactions
+- `GET /api/transactions/:id` - Get transaction by ID
+- `POST /api/transactions` - Create transaction
+- `PUT /api/transactions/:id` - Update transaction
+- `DELETE /api/transactions/:id` - Delete transaction
 
 #### Dashboard API
-- `GET /dashboard/:userId` - Get user dashboard
+- `GET /api/dashboard/:userId` - Get user dashboard
 
-#### Settings API (Mock - localStorage)
-- `GET /settings` - Get user settings
-- `PUT /settings` - Update user settings
+#### Settings API
+- `GET /api/settings` - Get the current user's settings (displayName, username, phone, theme, language, notifications)
+- `PUT /api/settings` - Update the current user's settings
 
 ## Usage Guide
 
 ### Login
 1. Navigate to login page
-2. Enter email (any valid format) and password (min 6 chars)
-3. Select user role
-4. Click "Login"
+2. Enter a registered email and password (min 6 chars)
+   - Admin: `tomer@trustticket.com` / `password123`
+   - User: `shay@trustticket.com` / `password123`
+3. Click "Login" (role is determined by the backend account)
 
-### Dashboard
-1. View all available tickets
-2. Filter by event type using dropdown
-3. Toggle between cards and table view
-4. Click on any ticket to see details
-5. Statistics show active listings, sales, and purchases
+### Dashboard (Marketplace)
+1. Browse tickets; search by name/venue and filter by event type, date, and price range
+2. Toggle between cards and table view
+3. Click **List a Ticket** to upload a ticket (it starts pending AI verification)
+4. On your own pending ticket, click **Run AI Verification** to list it
+5. On someone else's available ticket, click **Buy Now** (money held in escrow, ticket released to you)
+6. On a ticket you bought, click **Mark Barcode Used** to complete the sale (fees applied)
+7. Statistics show available tickets, your listings, purchases, and sales
 
 ### Settings
-1. Customize theme preference
-2. Select preferred language
-3. Toggle notifications
-4. View account information
-5. Click "Save Settings" to persist changes
+1. Edit your Display Name and Username (required, validated — at least 2 characters)
+2. Optionally add a phone number
+3. Customize theme preference (applies immediately on save)
+4. Toggle notifications (language is English-only; email and role are read-only)
+5. Click "Save Settings" to persist changes (shows loading / success / error states)
 
 ## Component Details
 
 ### Card Component
 - Displays individual ticket with event details
-- Shows pricing and availability status
-- Click handler for detail view
+- Shows pricing, status, seller name + trust rating (⭐/5), verified and AI-verified badges
+- Renders contextual workflow actions (Verify / Buy / Redeem) plus the detail-view handler
 
 ### Table Component
 - Sortable data table with ticket information
@@ -244,32 +268,32 @@ The application is fully responsive with breakpoints at:
 
 ## Known Limitations
 
-- No real payment processing
-- No file uploads for tickets
-- Settings are browser-local (not persisted to backend)
-- Mock transaction data only
+- **No real payment processing** — the escrow/fee flow (2.5% buyer + 2.5% seller) is an MVP that
+  simulates the process; no money is actually moved
+- **AI verification is mocked** — any pending ticket is approved when the seller runs the check
+- No file/PDF uploads for tickets (the barcode is entered as text)
+- Data is mock/in-memory on the backend, so all listings, transactions and settings reset on server restart
 - No real email verification
 
 ## Future Enhancements
 
-- Real payment integration
+- Real payment + escrow provider integration
+- Real AI ticket/barcode authenticity verification
 - Email verification system
-- Advanced search and filtering
-- User profile customization
-- Ticket upload with file support
+- Ticket upload with PDF/image file support
 - Real-time notifications
-- Review and rating system
+- Buyer-side reviews to complement seller trust ratings
 - Advanced analytics dashboard
 
 ## Troubleshooting
 
 ### Port Already in Use
-If port 3001 is already in use:
+If port 5173 is already in use:
 ```bash
-lsof -i :3001  # Find what's using the port
+lsof -i :5173  # Find what's using the port
 kill -9 <PID>  # Kill the process
 # or change port
-PORT=3002 npm start
+PORT=5174 npm start
 ```
 
 ### CORS Issues
@@ -295,7 +319,7 @@ curl http://localhost:3000
 
 This project meets all Assignment 3 requirements:
 - ✓ React.js application with create-react-app
-- ✓ Runs locally on port 3001
+- ✓ Runs locally on port 5173
 - ✓ Connects to backend API at http://localhost:3000
 - ✓ Client-side routing with React Router
 - ✓ Form validation and error handling
@@ -303,6 +327,9 @@ This project meets all Assignment 3 requirements:
 - ✓ Login, Navbar, Footer, Settings, Dashboard pages
 - ✓ Card component (used 3+ times)
 - ✓ Data table component with backend mapping
+- ✓ Marketplace workflow MVP: ticket upload → mock AI verification → buy (escrow) → redeem, with
+  seller trust ratings and a 2.5% + 2.5% fee model
+- ✓ Search and filter by event type, date, and price
 - ✓ README with run instructions
 
 ## Support

@@ -5,35 +5,44 @@
  */
 
 const express = require('express');
+const cors = require('cors'); // Enables cross-origin requests from the React frontend (different port)
 const app = express(); // Create the Express application instance
 
 // Import custom middleware
 const logger = require('./middleware/logger'); // Logs every incoming request (method, URL, status, duration)
 
 // Import route modules (each handles a specific resource)
+const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const ticketRoutes = require('./routes/ticketRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 
 // Server configuration - the port the API will listen on
 const PORT = 3000;
 
 // Global Middleware
+// CORS lets the frontend (http://localhost:3001) call this API from the browser.
+// Allow the custom headers the frontend sends for the simulated auth.
+app.use(cors({
+    origin: true, // Reflect the request origin (works for any localhost port during development)
+    allowedHeaders: ['Content-Type', 'x-user-role', 'x-user-id']
+}));
 // express.json() parses incoming JSON request bodies so we can access req.body
 app.use(express.json());
 // Logger middleware runs on every request and prints request info to the console
 app.use(logger);
 
 // API Route Mounting
-// All user-related endpoints are handled under /users
-app.use('/users', userRoutes);
-// All ticket-related endpoints are handled under /tickets
-app.use('/tickets', ticketRoutes);
-// All transaction-related endpoints are handled under /transactions
-app.use('/transactions', transactionRoutes);
-// User dashboard summaries are handled under /dashboard
-app.use('/dashboard', dashboardRoutes);
+// All endpoints live under the /api base path (e.g. /api/auth/login, /api/users/me),
+// matching the API contract defined in the assignment.
+app.use('/api/auth', authRoutes);            // Authentication endpoints (login / logout)
+app.use('/api/users', userRoutes);           // User-related endpoints
+app.use('/api/tickets', ticketRoutes);       // Ticket-related endpoints
+app.use('/api/transactions', transactionRoutes); // Transaction-related endpoints
+app.use('/api/dashboard', dashboardRoutes);  // User dashboard summaries
+app.use('/api/settings', settingsRoutes);    // Per-user settings
 
 // Root route - simple health-check to verify the server is running
 app.get('/', (req, res) => {
@@ -80,3 +89,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
     console.log(`[Trust Ticket] Server is running on http://localhost:${PORT}`);
 });
+
+module.exports = app;

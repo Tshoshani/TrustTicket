@@ -3,9 +3,12 @@ import { Link } from 'react-router-dom';
 import '../styles/Navbar.css';
 
 function Navbar({ user, onLogout }) {
-  const handleLogout = () => {
-    onLogout();
-    window.location.href = '/login';
+  const isStaff = user?.role === 'admin' || user?.role === 'manager';
+
+  const handleLogout = async () => {
+    // Wait for the logout (clears the session) before the app redirects.
+    // Once the session is cleared, App's protected routes redirect to /login.
+    await onLogout();
   };
 
   return (
@@ -17,12 +20,14 @@ function Navbar({ user, onLogout }) {
 
       <ul className="navbar-menu">
         <li><Link to="/dashboard">Dashboard</Link></li>
+        <li><Link to="/profile">Profile</Link></li>
+        {isStaff && <li><Link to="/admin">Admin</Link></li>}
         <li><Link to="/settings">Settings</Link></li>
       </ul>
 
       <div className="navbar-user">
         <span className="user-info">
-          {user?.name || 'User'} ({user?.role || 'user'})
+          {user?.displayName || user?.name || 'User'} ({user?.role || 'user'})
         </span>
         <button className="logout-btn" onClick={handleLogout}>
           Logout

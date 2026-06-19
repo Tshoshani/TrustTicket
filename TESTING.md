@@ -13,7 +13,7 @@ We provide both manual and automated testing options.
 ### Prerequisites
 - Both backend and frontend running
 - Backend: http://localhost:3000
-- Frontend: http://localhost:3001
+- Frontend: http://localhost:5173
 
 ### Test Scenarios
 
@@ -21,7 +21,7 @@ We provide both manual and automated testing options.
 
 ### Test 1.1: Valid Login
 **Steps:**
-1. Navigate to http://localhost:3001
+1. Navigate to http://localhost:5173
 2. Enter email: `test@example.com`
 3. Enter password: `password123`
 4. Select role: `user`
@@ -38,7 +38,7 @@ We provide both manual and automated testing options.
 
 ### Test 1.2: Invalid Email Format
 **Steps:**
-1. Navigate to http://localhost:3001
+1. Navigate to http://localhost:5173
 2. Enter email: `invalidemail`
 3. Enter password: `password123`
 4. Click "Login"
@@ -314,7 +314,7 @@ We provide both manual and automated testing options.
 ### Test 6.1: Protected Routes
 **Steps:**
 1. Logout (clear browser storage)
-2. Try to access http://localhost:3001/dashboard
+2. Try to access http://localhost:5173/dashboard
 3. Observe redirect
 
 **Expected Result:** ✅
@@ -458,7 +458,7 @@ test('renders card with ticket data', () => {
 Before submission:
 
 - [ ] Backend runs on port 3000
-- [ ] Frontend runs on port 3001
+- [ ] Frontend runs on port 5173
 - [ ] Login page works
 - [ ] Dashboard displays data
 - [ ] Settings page functional

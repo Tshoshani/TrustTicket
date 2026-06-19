@@ -64,13 +64,13 @@ Output:
 Server running on http://localhost:3000
 ```
 
-**Terminal 2 - Start Frontend (Port 3001):**
+**Terminal 2 - Start Frontend (Port 5173):**
 ```bash
 cd frontend
 npm start
 ```
 
-The app automatically opens at `http://localhost:3001`
+The app automatically opens at `http://localhost:5173`
 
 ## 📋 Project Overview
 
@@ -186,7 +186,7 @@ Set header: `x-user-role: admin|manager|user`
 ### Manual Testing Checklist
 
 **Login Flow:**
-- [ ] Navigate to http://localhost:3001
+- [ ] Navigate to http://localhost:5173
 - [ ] Enter email and password (6+ chars)
 - [ ] Select role and submit
 - [ ] Redirected to Dashboard
@@ -254,9 +254,9 @@ lsof -i :3000
 kill -9 <PID>
 ```
 
-**Frontend (3001):**
+**Frontend (5173):**
 ```bash
-lsof -i :3001
+lsof -i :5173
 kill -9 <PID>
 ```
 

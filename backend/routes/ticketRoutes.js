@@ -20,6 +20,18 @@ router.get('/:id', ticketController.getTicketById);
 // POST /tickets - Create a new ticket listing (sellers with role 'user' or 'admin')
 router.post('/', authorize(['user', 'admin']), ticketController.createTicket);
 
+// --- Marketplace workflow actions ---
+
+// POST /tickets/:id/verify - Approve a ticket via the mock "AI verification".
+// Admin/manager only: they act as the platform's verification authority.
+router.post('/:id/verify', authorize(['admin', 'manager']), ticketController.verifyTicket);
+
+// POST /tickets/:id/purchase - Buyer purchases a verified ticket (escrow / released)
+router.post('/:id/purchase', authorize(['user', 'admin', 'manager']), ticketController.purchaseTicket);
+
+// POST /tickets/:id/redeem - Barcode "used" -> complete the sale, pay the seller
+router.post('/:id/redeem', authorize(['user', 'admin', 'manager']), ticketController.redeemTicket);
+
 // PUT /tickets/:id - Update an existing ticket's info (seller or admin)
 router.put('/:id', authorize(['user', 'admin']), ticketController.updateTicket);
 

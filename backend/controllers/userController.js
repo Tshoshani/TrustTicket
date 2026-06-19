@@ -8,14 +8,46 @@
 // Using 'let' because the reference could change, though here we mutate the array in-place
 let users = require('../models/users');
 
+// Remove the password field before sending a user (or list of users) to the client.
+const toPublicUser = (user) => {
+  const { password, ...publicUser } = user;
+  return publicUser;
+};
+
 const userController = {
 
   /**
    * GET /users
-   * Returns the full list of all users.
+   * Returns the full list of all users (without passwords).
    */
   getAllUsers: (req, res) => {
-    res.status(200).json({ success: true, data: users, error: null });
+    res.status(200).json({ success: true, data: users.map(toPublicUser), error: null });
+  },
+
+  /**
+   * GET /users/me
+   * Returns the currently logged-in user, identified by the "x-user-id" header
+   * that the frontend sets after login. Used by the navbar to display user info.
+   */
+  getMe: (req, res) => {
+    const id = parseInt(req.headers['x-user-id']);
+
+    if (isNaN(id)) {
+      return res.status(401).json({
+        success: false, data: null,
+        error: { code: "UNAUTHORIZED", message: "Not authenticated. Missing or invalid x-user-id header.", details: {} }
+      });
+    }
+
+    const user = users.find(u => u.userId === id);
+    if (!user) {
+      return res.status(404).json({
+        success: false, data: null,
+        error: { code: "NOT_FOUND", message: `User with ID ${id} not found`, details: {} }
+      });
+    }
+
+    res.status(200).json({ success: true, data: toPublicUser(user), error: null });
   },
 
   /**
@@ -43,7 +75,7 @@ const userController = {
       });
     }
 
-    res.status(200).json({ success: true, data: user, error: null });
+    res.status(200).json({ success: true, data: toPublicUser(user), error: null });
   },
 
   /**

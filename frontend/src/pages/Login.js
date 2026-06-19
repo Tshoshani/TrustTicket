@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { authAPI } from '../services/api';
 import '../styles/Login.css';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('user');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -31,21 +31,22 @@ function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      // Simulate login - in a real app, this would hit the backend
-      // For now, we'll just store the user data locally
-      const userData = {
-        id: Math.floor(Math.random() * 1000),
-        name: email.split('@')[0],
-        email: email,
-        role: role,
-      };
+      // Call the real backend: POST /auth/login
+      const res = await authAPI.login(email, password);
+      const { user, token } = res.data;
 
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Normalize the backend user shape into the shape the app/components use.
+      const userData = {
+        id: user.userId,
+        name: `${user.firstName} ${user.lastName}`,
+        email: user.email,
+        role: user.userRole,
+        token,
+      };
 
       onLogin(userData);
     } catch (err) {
-      setError('Login failed. Please try again.');
+      setError(err.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -84,20 +85,6 @@ function Login({ onLogin }) {
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="role">Login as</label>
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              disabled={loading}
-            >
-              <option value="user">User</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
           {error && <div className="error-message">{error}</div>}
 
           <button
@@ -110,9 +97,9 @@ function Login({ onLogin }) {
 
           <div className="login-info">
             <p><strong>Demo Credentials:</strong></p>
-            <p>Email: user@example.com</p>
+            <p>Admin: tomer@trustticket.com</p>
+            <p>User: shay@trustticket.com</p>
             <p>Password: password123</p>
-            <p>(Any valid email and 6+ char password works)</p>
           </div>
         </form>
       </div>

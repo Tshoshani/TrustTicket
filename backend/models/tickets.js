@@ -13,7 +13,14 @@
  *   originalPrice - The price the seller originally paid
  *   salePrice     - The resale price listed by the seller
  *   sellerId      - userId of the seller who listed this ticket
- *   status        - "available" or "sold"
+ *   status        - Marketplace/escrow state, one of:
+ *                     "pending"   - just uploaded, awaiting AI verification
+ *                     "available" - verified by the AI check, listed for sale
+ *                     "reserved"  - bought by a buyer, money held in escrow,
+ *                                   ticket released to the buyer
+ *                     "completed" - barcode used; escrow released to the seller
+ *   verified      - Whether the mock "AI verification" approved the ticket
+ *   buyerId       - userId of the buyer once purchased (null while unsold)
  *   createDate    - ISO timestamp of when the listing was created
  *   updateDate    - ISO timestamp of the last update
  */
@@ -29,6 +36,8 @@ const tickets = [
     "salePrice": 250,
     "sellerId": 2,
     "status": "available",
+    "verified": true,
+    "buyerId": null,
     "createDate": "2026-05-10T08:00:00Z",
     "updateDate": "2026-05-10T08:00:00Z"
   },
@@ -43,6 +52,8 @@ const tickets = [
     "salePrice": 150,
     "sellerId": 3,
     "status": "available",
+    "verified": true,
+    "buyerId": null,
     "createDate": "2026-05-11T10:30:00Z",
     "updateDate": "2026-05-11T10:30:00Z"
   },
@@ -56,7 +67,9 @@ const tickets = [
     "originalPrice": 90,
     "salePrice": 100,
     "sellerId": 5,
-    "status": "available",
+    "status": "pending",
+    "verified": false,
+    "buyerId": null,
     "createDate": "2026-05-12T15:00:00Z",
     "updateDate": "2026-05-12T15:00:00Z"
   },
@@ -71,6 +84,8 @@ const tickets = [
     "salePrice": 200,
     "sellerId": 2,
     "status": "available",
+    "verified": true,
+    "buyerId": null,
     "createDate": "2026-05-13T11:00:00Z",
     "updateDate": "2026-05-13T11:00:00Z"
   },
@@ -84,7 +99,9 @@ const tickets = [
     "originalPrice": 350,
     "salePrice": 400,
     "sellerId": 3,
-    "status": "sold",
+    "status": "completed",
+    "verified": true,
+    "buyerId": 4,
     "createDate": "2026-05-14T09:00:00Z",
     "updateDate": "2026-05-15T14:00:00Z"
   }

@@ -8,6 +8,7 @@ function Footer() {
     <footer className="footer">
       <p>© {currentYear} TrustTicket. Secure Ticket Resale Marketplace</p>
       <p>Connecting buyers and sellers with trust and transparency</p>
+      <p>Built by Shay Silversmith &amp; Tomer Shoshani — Group 30</p>
     </footer>
   );
 }

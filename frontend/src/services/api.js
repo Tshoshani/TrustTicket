@@ -1,22 +1,24 @@
-const API_BASE_URL = 'http://localhost:3000';
+// Base URL of the backend REST API (Assignment 2 server).
+// All endpoints are served under the /api base path (e.g. /api/auth/login).
+const API_BASE_URL = 'http://localhost:3000/api';
 
-// Helper function to get headers with user role
+// Build request headers, including the simulated-auth headers the backend expects:
+//   x-user-role - used by the backend's authorize() middleware
+//   x-user-id   - used by GET /users/me and the settings endpoints
 const getHeaders = () => {
-  const user = localStorage.getItem('user');
-  let role = 'user';
-  
-  if (user) {
-    const userData = JSON.parse(user);
-    role = userData.role || 'user';
+  const headers = { 'Content-Type': 'application/json' };
+
+  const stored = localStorage.getItem('user');
+  if (stored) {
+    const user = JSON.parse(stored);
+    if (user.role) headers['x-user-role'] = user.role;
+    if (user.id !== undefined && user.id !== null) headers['x-user-id'] = String(user.id);
   }
 
-  return {
-    'Content-Type': 'application/json',
-    'x-user-role': role,
-  };
+  return headers;
 };
 
-// Helper function for API calls
+// Generic API call helper. Throws an Error with the backend message on failure.
 const apiCall = async (endpoint, method = 'GET', body = null) => {
   const options = {
     method,
@@ -42,9 +44,16 @@ const apiCall = async (endpoint, method = 'GET', body = null) => {
   }
 };
 
+// Auth API
+export const authAPI = {
+  // POST /auth/login - returns { success, data: { user, token }, error }
+  login: (email, password) => apiCall('/auth/login', 'POST', { email, password }),
+  logout: () => apiCall('/auth/logout', 'POST'),
+};
+
 // Users API
 export const usersAPI = {
-  getMe: () => apiCall('/users/1'),
+  getMe: () => apiCall('/users/me'),
   getAll: () => apiCall('/users'),
   getById: (id) => apiCall(`/users/${id}`),
   create: (userData) => apiCall('/users', 'POST', userData),
@@ -62,6 +71,10 @@ export const ticketsAPI = {
   create: (ticketData) => apiCall('/tickets', 'POST', ticketData),
   update: (id, ticketData) => apiCall(`/tickets/${id}`, 'PUT', ticketData),
   delete: (id) => apiCall(`/tickets/${id}`, 'DELETE'),
+  // Marketplace workflow actions
+  verify: (id) => apiCall(`/tickets/${id}/verify`, 'POST'),
+  purchase: (id) => apiCall(`/tickets/${id}/purchase`, 'POST'),
+  redeem: (id) => apiCall(`/tickets/${id}/redeem`, 'POST'),
 };
 
 // Transactions API
@@ -78,28 +91,10 @@ export const dashboardAPI = {
   getByUserId: (userId) => apiCall(`/dashboard/${userId}`),
 };
 
-// Settings API (Mock - using localStorage)
+// Settings API (connected to the backend: GET/PUT /settings)
 export const settingsAPI = {
-  get: () => {
-    const settings = localStorage.getItem('userSettings');
-    return Promise.resolve({
-      success: true,
-      data: settings ? JSON.parse(settings) : getDefaultSettings(),
-    });
-  },
-  update: (settings) => {
-    localStorage.setItem('userSettings', JSON.stringify(settings));
-    return Promise.resolve({
-      success: true,
-      data: settings,
-    });
-  },
+  get: () => apiCall('/settings'),
+  update: (settings) => apiCall('/settings', 'PUT', settings),
 };
-
-const getDefaultSettings = () => ({
-  theme: 'light',
-  notifications: true,
-  language: 'en',
-});
 
 export default apiCall;
