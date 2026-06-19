@@ -188,7 +188,7 @@ Set header: `x-user-role: admin|manager|user`
 **Login Flow:**
 - [ ] Navigate to http://localhost:5173
 - [ ] Enter email and password (6+ chars)
-- [ ] Select role and submit
+- [ ] Submit (role is determined by the backend account)
 - [ ] Redirected to Dashboard
 
 **Dashboard:**
@@ -310,7 +310,7 @@ npm run build
 ## 👥 Team Information
 
 - **Project:** TrustTicket - Secure Ticket Resale Marketplace
-- **Students:** Tomer Shoshani (211822457), Shay Zilbersmidt (206579674)
+- **Students:** Tomer Shoshani (211822457), Shay Silversmith (206579674)
 - **University:** School Project
 - **Year:** 2026
 

@@ -37,7 +37,7 @@ src/
 
 ### 1. **Login Page** ✓
 - Email and password validation
-- Role selection (user, manager, admin)
+- Role is assigned by the backend account (no manual role selection)
 - Error handling and loading states
 - Demo credentials info
 

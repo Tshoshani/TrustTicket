@@ -22,10 +22,9 @@ We provide both manual and automated testing options.
 ### Test 1.1: Valid Login
 **Steps:**
 1. Navigate to http://localhost:5173
-2. Enter email: `test@example.com`
+2. Enter email: `shay@trustticket.com`
 3. Enter password: `password123`
-4. Select role: `user`
-5. Click "Login"
+4. Click "Login"
 
 **Expected Result:** ✅
 - Redirects to Dashboard

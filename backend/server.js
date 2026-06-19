@@ -23,7 +23,7 @@ const settingsRoutes = require('./routes/settingsRoutes');
 const PORT = 3000;
 
 // Global Middleware
-// CORS lets the frontend (http://localhost:3001) call this API from the browser.
+// CORS lets the frontend (http://localhost:5173) call this API from the browser.
 // Allow the custom headers the frontend sends for the simulated auth.
 app.use(cors({
     origin: true, // Reflect the request origin (works for any localhost port during development)
