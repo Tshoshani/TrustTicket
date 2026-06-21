@@ -1,10 +1,10 @@
 /**
- * controllers/transactionController.js - Business logic for Transaction endpoints.
- * Transactions are mock records that simulate TrustTicket's escrow flow.
- * All responses follow the standard format: { success, data, error }.
+ * controllers/transactionController.js
+ * Transaction controller using MySQL + Sequelize ORM.
+ * Replaces the old in-memory transactions array while keeping the same API contract.
  */
 
-let transactions = require('../models/transactions');
+const { Transaction, Ticket, User } = require('../models');
 
 function getMissingFields(body, requiredFields) {
     return requiredFields.filter(field => body[field] === undefined || body[field] === null || body[field] === "");
@@ -15,139 +15,387 @@ function calculateFee(totalPrice, rate) {
     return Number.isNaN(amount) ? 0 : Number((amount * rate).toFixed(2));
 }
 
+function handleServerError(res, code, message, err) {
+    return res.status(500).json({
+        success: false,
+        data: null,
+        error: {
+            code,
+            message,
+            details: {
+                reason: err.message
+            }
+        }
+    });
+}
+
+const ticketInclude = {
+    model: Ticket,
+    as: "ticket",
+    attributes: [
+        "ticketId",
+        "eventName",
+        "eventType",
+        "eventDate",
+        "venue",
+        "salePrice",
+        "status",
+        "verified"
+    ]
+};
+
+const buyerInclude = {
+    model: User,
+    as: "buyer",
+    attributes: [
+        "userId",
+        "firstName",
+        "lastName",
+        "email",
+        "trustRating",
+        "verifiedSeller"
+    ]
+};
+
+const sellerInclude = {
+    model: User,
+    as: "seller",
+    attributes: [
+        "userId",
+        "firstName",
+        "lastName",
+        "email",
+        "trustRating",
+        "verifiedSeller"
+    ]
+};
+
 const transactionController = {
 
     /**
      * GET /transactions
-     * Returns the full list of mock transactions.
+     * Returns all transactions from MySQL.
      */
-    getAllTransactions: (req, res) => {
-        res.status(200).json({ success: true, data: transactions, error: null });
+    getAllTransactions: async (req, res) => {
+        try {
+            const transactions = await Transaction.findAll({
+                include: [ticketInclude, buyerInclude, sellerInclude],
+                order: [["transactionId", "ASC"]]
+            });
+
+            return res.status(200).json({
+                success: true,
+                data: transactions,
+                error: null
+            });
+        } catch (err) {
+            return handleServerError(res, "TRANSACTIONS_FETCH_FAILED", "Failed to load transactions", err);
+        }
     },
 
     /**
      * GET /transactions/:id
-     * Returns a single transaction by its numeric ID.
+     * Returns one transaction by ID.
      */
-    getTransactionById: (req, res) => {
-        const id = parseInt(req.params.id);
+    getTransactionById: async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
 
-        if (isNaN(id)) {
-            return res.status(400).json({
-                success: false, data: null,
-                error: { code: "VALIDATION_ERROR", message: "Invalid transaction ID. Must be a number.", details: { field: "id" } }
+            if (isNaN(id)) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: "Invalid transaction ID. Must be a number.",
+                        details: { field: "id" }
+                    }
+                });
+            }
+
+            const transaction = await Transaction.findByPk(id, {
+                include: [ticketInclude, buyerInclude, sellerInclude]
             });
-        }
 
-        const transaction = transactions.find(t => t.transactionId === id);
-        if (!transaction) {
-            return res.status(404).json({
-                success: false, data: null,
-                error: { code: "NOT_FOUND", message: `Transaction with ID ${id} not found`, details: {} }
+            if (!transaction) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "NOT_FOUND",
+                        message: `Transaction with ID ${id} not found`,
+                        details: {}
+                    }
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                data: transaction,
+                error: null
             });
+        } catch (err) {
+            return handleServerError(res, "TRANSACTION_FETCH_FAILED", "Failed to load transaction", err);
         }
-
-        res.status(200).json({ success: true, data: transaction, error: null });
     },
 
     /**
      * POST /transactions
-     * Creates a new mock escrow transaction.
+     * Creates a new transaction in MySQL.
      * Required fields: ticketId, buyerId, sellerId, totalPrice.
      */
-    createTransaction: (req, res) => {
-        const requiredFields = ["ticketId", "buyerId", "sellerId", "totalPrice"];
-        const body = req.body || {};
-        const missing = getMissingFields(body, requiredFields);
+    createTransaction: async (req, res) => {
+        try {
+            const requiredFields = ["ticketId", "buyerId", "sellerId", "totalPrice"];
+            const body = req.body || {};
+            const missing = getMissingFields(body, requiredFields);
 
-        if (missing.length > 0) {
-            return res.status(400).json({
-                success: false, data: null,
-                error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
+            if (missing.length > 0) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: `Missing required field(s): ${missing.join(", ")}`,
+                        details: { missing }
+                    }
+                });
+            }
+
+            const {
+                ticketId,
+                buyerId,
+                sellerId,
+                totalPrice,
+                status,
+                ticketReleased,
+                buyerFee,
+                sellerFee
+            } = body;
+
+            const ticket = await Ticket.findByPk(ticketId);
+            if (!ticket) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "TICKET_NOT_FOUND",
+                        message: `Ticket with ID ${ticketId} not found`,
+                        details: { ticketId }
+                    }
+                });
+            }
+
+            const buyer = await User.findByPk(buyerId);
+            if (!buyer) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "BUYER_NOT_FOUND",
+                        message: `Buyer with ID ${buyerId} not found`,
+                        details: { buyerId }
+                    }
+                });
+            }
+
+            const seller = await User.findByPk(sellerId);
+            if (!seller) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "SELLER_NOT_FOUND",
+                        message: `Seller with ID ${sellerId} not found`,
+                        details: { sellerId }
+                    }
+                });
+            }
+
+            const newTransaction = await Transaction.create({
+                ticketId,
+                buyerId,
+                sellerId,
+                status: status || "escrow_pending",
+                ticketReleased: ticketReleased === undefined ? false : Boolean(ticketReleased),
+                buyerFee: buyerFee === undefined ? calculateFee(totalPrice, 0.05) : buyerFee,
+                sellerFee: sellerFee === undefined ? calculateFee(totalPrice, 0.03) : sellerFee,
+                totalPrice,
+                createDate: new Date(),
+                updateDate: new Date()
             });
+
+            return res.status(201).json({
+                success: true,
+                data: {
+                    transactionId: newTransaction.transactionId
+                },
+                error: null
+            });
+        } catch (err) {
+            return handleServerError(res, "TRANSACTION_CREATE_FAILED", "Failed to create transaction", err);
         }
-
-        const { ticketId, buyerId, sellerId, totalPrice, status, ticketReleased, buyerFee, sellerFee } = body;
-        const now = new Date().toISOString();
-        const newTransaction = {
-            transactionId: transactions.length > 0 ? Math.max(...transactions.map(t => t.transactionId)) + 1 : 1001,
-            ticketId,
-            buyerId,
-            sellerId,
-            status: status || "escrow_pending",
-            ticketReleased: ticketReleased === undefined ? false : Boolean(ticketReleased),
-            buyerFee: buyerFee === undefined ? calculateFee(totalPrice, 0.05) : buyerFee,
-            sellerFee: sellerFee === undefined ? calculateFee(totalPrice, 0.03) : sellerFee,
-            totalPrice,
-            createDate: now,
-            updateDate: now
-        };
-
-        transactions.push(newTransaction);
-        res.status(201).json({ success: true, data: { transactionId: newTransaction.transactionId }, error: null });
     },
 
     /**
      * PUT /transactions/:id
-     * Updates an existing mock transaction.
-     * Required fields: ticketId, buyerId, sellerId, totalPrice, status, ticketReleased.
+     * Updates an existing transaction in MySQL.
      */
-    updateTransaction: (req, res) => {
-        const id = parseInt(req.params.id);
-        const body = req.body || {};
+    updateTransaction: async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+            const body = req.body || {};
 
-        if (isNaN(id)) {
-            return res.status(400).json({
-                success: false, data: null,
-                error: { code: "VALIDATION_ERROR", message: "Invalid transaction ID. Must be a number.", details: { field: "id" } }
+            if (isNaN(id)) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: "Invalid transaction ID. Must be a number.",
+                        details: { field: "id" }
+                    }
+                });
+            }
+
+            const transaction = await Transaction.findByPk(id);
+
+            if (!transaction) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "NOT_FOUND",
+                        message: `Transaction with ID ${id} not found`,
+                        details: {}
+                    }
+                });
+            }
+
+            const requiredFields = ["ticketId", "buyerId", "sellerId", "totalPrice", "status", "ticketReleased"];
+            const missing = getMissingFields(body, requiredFields);
+
+            if (missing.length > 0) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: `Missing required field(s): ${missing.join(", ")}`,
+                        details: { missing }
+                    }
+                });
+            }
+
+            const ticket = await Ticket.findByPk(body.ticketId);
+            if (!ticket) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "TICKET_NOT_FOUND",
+                        message: `Ticket with ID ${body.ticketId} not found`,
+                        details: { ticketId: body.ticketId }
+                    }
+                });
+            }
+
+            const buyer = await User.findByPk(body.buyerId);
+            if (!buyer) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "BUYER_NOT_FOUND",
+                        message: `Buyer with ID ${body.buyerId} not found`,
+                        details: { buyerId: body.buyerId }
+                    }
+                });
+            }
+
+            const seller = await User.findByPk(body.sellerId);
+            if (!seller) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "SELLER_NOT_FOUND",
+                        message: `Seller with ID ${body.sellerId} not found`,
+                        details: { sellerId: body.sellerId }
+                    }
+                });
+            }
+
+            await transaction.update({
+                ticketId: body.ticketId,
+                buyerId: body.buyerId,
+                sellerId: body.sellerId,
+                status: body.status,
+                ticketReleased: Boolean(body.ticketReleased),
+                buyerFee: body.buyerFee === undefined ? calculateFee(body.totalPrice, 0.05) : body.buyerFee,
+                sellerFee: body.sellerFee === undefined ? calculateFee(body.totalPrice, 0.03) : body.sellerFee,
+                totalPrice: body.totalPrice,
+                updateDate: new Date()
             });
-        }
 
-        const index = transactions.findIndex(t => t.transactionId === id);
-        if (index === -1) {
-            return res.status(404).json({
-                success: false, data: null,
-                error: { code: "NOT_FOUND", message: `Transaction with ID ${id} not found`, details: {} }
+            return res.status(200).json({
+                success: true,
+                data: {
+                    transactionId: id
+                },
+                error: null
             });
+        } catch (err) {
+            return handleServerError(res, "TRANSACTION_UPDATE_FAILED", "Failed to update transaction", err);
         }
-
-        const requiredFields = ["ticketId", "buyerId", "sellerId", "totalPrice", "status", "ticketReleased"];
-        const missing = getMissingFields(body, requiredFields);
-        if (missing.length > 0) {
-            return res.status(400).json({
-                success: false, data: null,
-                error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
-            });
-        }
-
-        transactions[index] = { ...transactions[index], ...body, updateDate: new Date().toISOString() };
-        res.status(200).json({ success: true, data: { transactionId: id }, error: null });
     },
 
     /**
      * DELETE /transactions/:id
-     * Removes a mock transaction by its ID.
+     * Deletes a transaction from MySQL.
      */
-    deleteTransaction: (req, res) => {
-        const id = parseInt(req.params.id);
+    deleteTransaction: async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
 
-        if (isNaN(id)) {
-            return res.status(400).json({
-                success: false, data: null,
-                error: { code: "VALIDATION_ERROR", message: "Invalid transaction ID. Must be a number.", details: { field: "id" } }
+            if (isNaN(id)) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: "Invalid transaction ID. Must be a number.",
+                        details: { field: "id" }
+                    }
+                });
+            }
+
+            const transaction = await Transaction.findByPk(id);
+
+            if (!transaction) {
+                return res.status(404).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "NOT_FOUND",
+                        message: `Transaction with ID ${id} not found`,
+                        details: {}
+                    }
+                });
+            }
+
+            await transaction.destroy();
+
+            return res.status(200).json({
+                success: true,
+                data: {
+                    transactionId: id
+                },
+                error: null
             });
+        } catch (err) {
+            return handleServerError(res, "TRANSACTION_DELETE_FAILED", "Failed to delete transaction", err);
         }
-
-        const index = transactions.findIndex(t => t.transactionId === id);
-        if (index === -1) {
-            return res.status(404).json({
-                success: false, data: null,
-                error: { code: "NOT_FOUND", message: `Transaction with ID ${id} not found`, details: {} }
-            });
-        }
-
-        transactions.splice(index, 1);
-        res.status(200).json({ success: true, data: { transactionId: id }, error: null });
     }
 };
 
