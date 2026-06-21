@@ -2,6 +2,12 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../src/config/database");
 
 const Ticket = sequelize.define("Ticket", {
+  ticketId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    field: "ticket_id"
+  },
   eventName: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -13,7 +19,7 @@ const Ticket = sequelize.define("Ticket", {
     field: "event_type"
   },
   eventDate: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
     field: "event_date"
   },
@@ -35,26 +41,34 @@ const Ticket = sequelize.define("Ticket", {
     allowNull: false,
     field: "sale_price"
   },
-  status: {
-    type: DataTypes.ENUM("available", "reserved", "sold", "redeemed"),
-    defaultValue: "available"
-  },
-  verified: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
-  },
   sellerId: {
     type: DataTypes.INTEGER,
     allowNull: false,
     field: "seller_id"
   },
+  status: {
+    type: DataTypes.ENUM("pending", "available", "reserved", "completed", "redeemed"),
+    defaultValue: "pending"
+  },
+  verified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  },
   buyerId: {
     type: DataTypes.INTEGER,
     field: "buyer_id"
+  },
+  createDate: {
+    type: DataTypes.DATE,
+    field: "create_date"
+  },
+  updateDate: {
+    type: DataTypes.DATE,
+    field: "update_date"
   }
 }, {
   tableName: "tickets",
-  underscored: true
+  timestamps: false
 });
 
 module.exports = Ticket;

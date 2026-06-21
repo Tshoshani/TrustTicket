@@ -13,11 +13,14 @@ const Favorite = sequelize.define("Favorite", {
     allowNull: false,
     primaryKey: true,
     field: "ticket_id"
+  },
+  createDate: {
+    type: DataTypes.DATE,
+    field: "create_date"
   }
 }, {
   tableName: "favorites",
-  underscored: true,
-  updatedAt: false
+  timestamps: false
 });
 
 module.exports = Favorite;

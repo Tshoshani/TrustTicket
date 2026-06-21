@@ -17,7 +17,7 @@ Admin.belongsTo(User, {
   as: "user"
 });
 
-// User - Ticket: one-to-many seller relationship
+// User - Tickets: one-to-many seller relationship
 User.hasMany(Ticket, {
   foreignKey: "sellerId",
   as: "sellingTickets"
@@ -28,7 +28,7 @@ Ticket.belongsTo(User, {
   as: "seller"
 });
 
-// User - Ticket: buyer relationship
+// User - Tickets: buyer relationship
 User.hasMany(Ticket, {
   foreignKey: "buyerId",
   as: "boughtTickets"
@@ -39,7 +39,7 @@ Ticket.belongsTo(User, {
   as: "buyer"
 });
 
-// User - Ticket: many-to-many favorites
+// User - Ticket: many-to-many through favorites
 User.belongsToMany(Ticket, {
   through: Favorite,
   foreignKey: "userId",
@@ -65,6 +65,7 @@ Transaction.belongsTo(Ticket, {
   as: "ticket"
 });
 
+// User - Transactions
 User.hasMany(Transaction, {
   foreignKey: "buyerId",
   as: "buyerTransactions"

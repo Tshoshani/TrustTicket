@@ -3,8 +3,7 @@
  * Sets up Express, registers global middleware, mounts route handlers,
  * and starts listening on the configured port.
  */
-const { sequelize } = require('../models');
-const express = require('express');
+const { sequelize, User, Ticket, Transaction, Favorite } = require('../models');const express = require('express');
 const cors = require('cors'); // Enables cross-origin requests from the React frontend (different port)
 const app = express(); // Create the Express application instance
 
@@ -72,6 +71,48 @@ app.get('/api/db-test', async (req, res) => {
             error: {
                 code: "DB_CONNECTION_ERROR",
                 message: "Could not connect to database",
+                details: {
+                    reason: err.message
+                }
+            }
+        });
+    }
+});
+
+
+app.get('/api/orm-test', async (req, res) => {
+    try {
+        const users = await User.findAll();
+        const tickets = await Ticket.findAll({
+            include: [
+                {
+                    model: User,
+                    as: "seller",
+                    attributes: ["userId", "firstName", "lastName", "trustRating", "verifiedSeller"]
+                }
+            ]
+        });
+        const transactions = await Transaction.findAll();
+        const favorites = await Favorite.findAll();
+
+        res.json({
+            success: true,
+            data: {
+                usersCount: users.length,
+                ticketsCount: tickets.length,
+                transactionsCount: transactions.length,
+                favoritesCount: favorites.length,
+                sampleTicketWithSeller: tickets[0]
+            },
+            error: null
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            data: null,
+            error: {
+                code: "ORM_TEST_FAILED",
+                message: "ORM test failed",
                 details: {
                     reason: err.message
                 }

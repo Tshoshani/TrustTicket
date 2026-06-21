@@ -2,6 +2,12 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../src/config/database");
 
 const Transaction = sequelize.define("Transaction", {
+  transactionId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    field: "transaction_id"
+  },
   ticketId: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -17,17 +23,41 @@ const Transaction = sequelize.define("Transaction", {
     allowNull: false,
     field: "seller_id"
   },
-  amount: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
-  },
   status: {
-    type: DataTypes.ENUM("pending", "completed", "cancelled"),
-    defaultValue: "pending"
+    type: DataTypes.ENUM("escrow_pending", "ticket_released", "completed", "cancelled"),
+    defaultValue: "escrow_pending"
+  },
+  ticketReleased: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    field: "ticket_released"
+  },
+  buyerFee: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0,
+    field: "buyer_fee"
+  },
+  sellerFee: {
+    type: DataTypes.DECIMAL(10, 2),
+    defaultValue: 0,
+    field: "seller_fee"
+  },
+  totalPrice: {
+    type: DataTypes.DECIMAL(10, 2),
+    allowNull: false,
+    field: "total_price"
+  },
+  createDate: {
+    type: DataTypes.DATE,
+    field: "create_date"
+  },
+  updateDate: {
+    type: DataTypes.DATE,
+    field: "update_date"
   }
 }, {
   tableName: "transactions",
-  underscored: true
+  timestamps: false
 });
 
 module.exports = Transaction;
