@@ -1,189 +1,385 @@
 /**
- * controllers/userController.js - Business logic for User endpoints.
- * Each method handles one route action (get all, get by ID, create, update, delete).
- * All responses follow the standard format: { success, data, error }.
+ * controllers/userController.js
+ * User controller using MySQL + Sequelize ORM.
+ * Replaces the old in-memory users array while keeping the same API contract.
  */
 
-// Import the in-memory users array (mock database)
-// Using 'let' because the reference could change, though here we mutate the array in-place
-let users = require('../models/users');
+const { User } = require('../models');
 
-// Remove the password field before sending a user (or list of users) to the client.
-const toPublicUser = (user) => {
+const toPublicUser = (userInstance) => {
+  const user = userInstance.toJSON ? userInstance.toJSON() : userInstance;
   const { password, ...publicUser } = user;
   return publicUser;
 };
 
-const userController = {
+function handleServerError(res, code, message, err) {
+  return res.status(500).json({
+    success: false,
+    data: null,
+    error: {
+      code,
+      message,
+      details: {
+        reason: err.message
+      }
+    }
+  });
+}
 
+const userController = {
   /**
    * GET /users
-   * Returns the full list of all users (without passwords).
+   * Returns all users from MySQL without passwords.
    */
-  getAllUsers: (req, res) => {
-    res.status(200).json({ success: true, data: users.map(toPublicUser), error: null });
+  getAllUsers: async (req, res) => {
+    try {
+      const users = await User.findAll({
+        order: [["userId", "ASC"]]
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: users.map(toPublicUser),
+        error: null
+      });
+    } catch (err) {
+      return handleServerError(res, "USERS_FETCH_FAILED", "Failed to load users", err);
+    }
   },
 
   /**
    * GET /users/me
-   * Returns the currently logged-in user, identified by the "x-user-id" header
-   * that the frontend sets after login. Used by the navbar to display user info.
+   * Returns the currently logged-in user based on x-user-id header.
    */
-  getMe: (req, res) => {
-    const id = parseInt(req.headers['x-user-id']);
+  getMe: async (req, res) => {
+    try {
+      const id = parseInt(req.headers['x-user-id']);
 
-    if (isNaN(id)) {
-      return res.status(401).json({
-        success: false, data: null,
-        error: { code: "UNAUTHORIZED", message: "Not authenticated. Missing or invalid x-user-id header.", details: {} }
+      if (isNaN(id)) {
+        return res.status(401).json({
+          success: false,
+          data: null,
+          error: {
+            code: "UNAUTHORIZED",
+            message: "Not authenticated. Missing or invalid x-user-id header.",
+            details: {}
+          }
+        });
+      }
+
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          data: null,
+          error: {
+            code: "NOT_FOUND",
+            message: `User with ID ${id} not found`,
+            details: {}
+          }
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: toPublicUser(user),
+        error: null
       });
+    } catch (err) {
+      return handleServerError(res, "USER_FETCH_FAILED", "Failed to load current user", err);
     }
-
-    const user = users.find(u => u.userId === id);
-    if (!user) {
-      return res.status(404).json({
-        success: false, data: null,
-        error: { code: "NOT_FOUND", message: `User with ID ${id} not found`, details: {} }
-      });
-    }
-
-    res.status(200).json({ success: true, data: toPublicUser(user), error: null });
   },
 
   /**
    * GET /users/:id
-   * Returns a single user matching the given ID.
-   * Validates that :id is a valid number before searching.
+   * Returns one user from MySQL by ID.
    */
-  getUserById: (req, res) => {
-    const id = parseInt(req.params.id); // Convert the URL param from string to integer
+  getUserById: async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
 
-    // Validation: ensure the ID is a valid number
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false, data: null,
-        error: { code: "VALIDATION_ERROR", message: "Invalid user ID. Must be a number.", details: { field: "id" } }
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid user ID. Must be a number.",
+            details: { field: "id" }
+          }
+        });
+      }
+
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          data: null,
+          error: {
+            code: "NOT_FOUND",
+            message: `User with ID ${id} not found`,
+            details: {}
+          }
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        data: toPublicUser(user),
+        error: null
       });
+    } catch (err) {
+      return handleServerError(res, "USER_FETCH_FAILED", "Failed to load user", err);
     }
-
-    // Search for the user in the in-memory array
-    const user = users.find(u => u.userId === id);
-    if (!user) {
-      return res.status(404).json({
-        success: false, data: null,
-        error: { code: "NOT_FOUND", message: `User with ID ${id} not found`, details: {} }
-      });
-    }
-
-    res.status(200).json({ success: true, data: toPublicUser(user), error: null });
   },
 
   /**
    * POST /users
-   * Creates a new user from the request body.
-   * Required fields: firstName, lastName, userRole.
-   * Auto-generates userId, createDate, and updateDate.
+   * Creates a new user in MySQL.
+   * Keeps old API requirement: firstName, lastName, userRole.
+   * Also supports optional email and password.
    */
-  createUser: (req, res) => {
-    // Destructure expected fields from the request body
-    const { firstName, lastName, userRole } = req.body;
+  createUser: async (req, res) => {
+    try {
+      const { firstName, lastName, userRole, email, password } = req.body;
 
-    // Validate that all required fields are present
-    if (!firstName || !lastName || !userRole) {
-      // Build a list of which specific fields are missing for a helpful error message
-      const missing = [];
-      if (!firstName) missing.push("firstName");
-      if (!lastName) missing.push("lastName");
-      if (!userRole) missing.push("userRole");
-      return res.status(400).json({
-        success: false, data: null,
-        error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
+      if (!firstName || !lastName || !userRole) {
+        const missing = [];
+        if (!firstName) missing.push("firstName");
+        if (!lastName) missing.push("lastName");
+        if (!userRole) missing.push("userRole");
+
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: `Missing required field(s): ${missing.join(", ")}`,
+            details: { missing }
+          }
+        });
+      }
+
+      if (!["admin", "manager", "user"].includes(userRole)) {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid userRole. Must be admin, manager, or user.",
+            details: { field: "userRole" }
+          }
+        });
+      }
+
+      const safeFirstName = firstName.trim();
+      const safeLastName = lastName.trim();
+
+      const generatedEmail =
+        email ||
+        `${safeFirstName.toLowerCase()}.${safeLastName.toLowerCase()}.${Date.now()}@trustticket.local`;
+
+      const newUser = await User.create({
+        firstName: safeFirstName,
+        lastName: safeLastName,
+        email: generatedEmail,
+        password: password || "password123",
+        userRole,
+        trustRating: 0,
+        ratingCount: 0,
+        successfulDeals: 0,
+        verifiedSeller: false,
+        createDate: new Date(),
+        updateDate: new Date()
       });
+
+      return res.status(201).json({
+        success: true,
+        data: {
+          userId: newUser.userId
+        },
+        error: null
+      });
+    } catch (err) {
+      if (err.name === "SequelizeUniqueConstraintError") {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "DUPLICATE_EMAIL",
+            message: "A user with this email already exists.",
+            details: {}
+          }
+        });
+      }
+
+      return handleServerError(res, "USER_CREATE_FAILED", "Failed to create user", err);
     }
-
-    // Generate a new unique ID by finding the current max ID and adding 1.
-    // This avoids duplicate IDs even after deletions (unlike users.length + 1).
-    const newUser = {
-      userId: users.length > 0 ? Math.max(...users.map(u => u.userId)) + 1 : 1,
-      firstName,
-      lastName,
-      userRole,
-      createDate: new Date().toISOString(), // Timestamp of creation
-      updateDate: new Date().toISOString()  // Same as createDate initially
-    };
-
-    users.push(newUser); // Add the new user to the in-memory array
-    res.status(201).json({ success: true, data: { userId: newUser.userId }, error: null });
   },
 
   /**
    * PUT /users/:id
-   * Updates an existing user's firstName, lastName, and userRole.
-   * All three fields are required in the request body.
-   * Automatically refreshes the updateDate timestamp.
+   * Updates user details in MySQL.
+   * Keeps old API behavior: firstName, lastName, userRole are required.
    */
-  updateUser: (req, res) => {
-    const id = parseInt(req.params.id);
+  updateUser: async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
 
-    // Validate that the ID is a number
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false, data: null,
-        error: { code: "VALIDATION_ERROR", message: "Invalid user ID. Must be a number.", details: { field: "id" } }
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid user ID. Must be a number.",
+            details: { field: "id" }
+          }
+        });
+      }
+
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          data: null,
+          error: {
+            code: "NOT_FOUND",
+            message: `User with ID ${id} not found`,
+            details: {}
+          }
+        });
+      }
+
+      const { firstName, lastName, userRole, email, password } = req.body;
+
+      if (!firstName || !lastName || !userRole) {
+        const missing = [];
+        if (!firstName) missing.push("firstName");
+        if (!lastName) missing.push("lastName");
+        if (!userRole) missing.push("userRole");
+
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: `Missing required field(s): ${missing.join(", ")}`,
+            details: { missing }
+          }
+        });
+      }
+
+      if (!["admin", "manager", "user"].includes(userRole)) {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid userRole. Must be admin, manager, or user.",
+            details: { field: "userRole" }
+          }
+        });
+      }
+
+      const updateData = {
+        firstName,
+        lastName,
+        userRole,
+        updateDate: new Date()
+      };
+
+      if (email) updateData.email = email;
+      if (password) updateData.password = password;
+
+      await user.update(updateData);
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          userId: id
+        },
+        error: null
       });
-    }
+    } catch (err) {
+      if (err.name === "SequelizeUniqueConstraintError") {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "DUPLICATE_EMAIL",
+            message: "A user with this email already exists.",
+            details: {}
+          }
+        });
+      }
 
-    // Find the user's position in the array
-    const index = users.findIndex(u => u.userId === id);
-    if (index === -1) {
-      return res.status(404).json({
-        success: false, data: null,
-        error: { code: "NOT_FOUND", message: `User with ID ${id} not found`, details: {} }
-      });
+      return handleServerError(res, "USER_UPDATE_FAILED", "Failed to update user", err);
     }
-
-    // Validate the update body - all fields are required for a full update (PUT)
-    const { firstName, lastName, userRole } = req.body;
-    if (!firstName || !lastName || !userRole) {
-      const missing = [];
-      if (!firstName) missing.push("firstName");
-      if (!lastName) missing.push("lastName");
-      if (!userRole) missing.push("userRole");
-      return res.status(400).json({
-        success: false, data: null,
-        error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
-      });
-    }
-
-    // Merge old data with new fields using spread operator; update the timestamp
-    users[index] = { ...users[index], firstName, lastName, userRole, updateDate: new Date().toISOString() };
-    res.status(200).json({ success: true, data: { userId: id }, error: null });
   },
 
   /**
    * DELETE /users/:id
-   * Removes a user from the in-memory array by their ID.
+   * Deletes a user from MySQL.
+   * If the user owns tickets/transactions, MySQL may block deletion because of foreign keys.
    */
-  deleteUser: (req, res) => {
-    const id = parseInt(req.params.id);
+  deleteUser: async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
 
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false, data: null,
-        error: { code: "VALIDATION_ERROR", message: "Invalid user ID. Must be a number.", details: { field: "id" } }
+      if (isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "Invalid user ID. Must be a number.",
+            details: { field: "id" }
+          }
+        });
+      }
+
+      const user = await User.findByPk(id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          data: null,
+          error: {
+            code: "NOT_FOUND",
+            message: "User not found",
+            details: {}
+          }
+        });
+      }
+
+      await user.destroy();
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          userId: id
+        },
+        error: null
       });
-    }
+    } catch (err) {
+      if (err.name === "SequelizeForeignKeyConstraintError") {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: {
+            code: "USER_HAS_RELATED_RECORDS",
+            message: "Cannot delete this user because they are connected to tickets, transactions, favorites, or admin records.",
+            details: {}
+          }
+        });
+      }
 
-    const index = users.findIndex(u => u.userId === id);
-    if (index === -1) {
-      return res.status(404).json({
-        success: false, data: null,
-        error: { code: "NOT_FOUND", message: "User not found", details: {} }
-      });
+      return handleServerError(res, "USER_DELETE_FAILED", "Failed to delete user", err);
     }
-
-    users.splice(index, 1); // Remove 1 element at the found index
-    res.status(200).json({ success: true, data: { userId: id }, error: null });
   }
 };
 
