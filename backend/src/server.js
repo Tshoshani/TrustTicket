@@ -3,21 +3,22 @@
  * Sets up Express, registers global middleware, mounts route handlers,
  * and starts listening on the configured port.
  */
-
+const { sequelize } = require('../models');
 const express = require('express');
 const cors = require('cors'); // Enables cross-origin requests from the React frontend (different port)
 const app = express(); // Create the Express application instance
 
 // Import custom middleware
-const logger = require('./middleware/logger'); // Logs every incoming request (method, URL, status, duration)
+const logger = require('../middleware/logger');
+ // Logs every incoming request (method, URL, status, duration)
 
 // Import route modules (each handles a specific resource)
-const authRoutes = require('./routes/authRoutes');
-const userRoutes = require('./routes/userRoutes');
-const ticketRoutes = require('./routes/ticketRoutes');
-const transactionRoutes = require('./routes/transactionRoutes');
-const dashboardRoutes = require('./routes/dashboardRoutes');
-const settingsRoutes = require('./routes/settingsRoutes');
+const authRoutes = require('../routes/authRoutes');
+const userRoutes = require('../routes/userRoutes');
+const ticketRoutes = require('../routes/ticketRoutes');
+const transactionRoutes = require('../routes/transactionRoutes');
+const dashboardRoutes = require('../routes/dashboardRoutes');
+const settingsRoutes = require('../routes/settingsRoutes');
 
 // Server configuration - the port the API will listen on
 const PORT = 3000;
@@ -26,7 +27,7 @@ const PORT = 3000;
 // CORS lets the frontend (http://localhost:5173) call this API from the browser.
 // Allow the custom headers the frontend sends for the simulated auth.
 app.use(cors({
-    origin: true, // Reflect the request origin (works for any localhost port during development)
+    origin: "http://localhost:5173", // Allow requests from the frontend dev server
     allowedHeaders: ['Content-Type', 'x-user-role', 'x-user-id']
 }));
 // express.json() parses incoming JSON request bodies so we can access req.body
@@ -51,6 +52,32 @@ app.get('/', (req, res) => {
         data: { message: "Welcome to Trust Ticket API" },
         error: null
     });
+});
+
+app.get('/api/db-test', async (req, res) => {
+    try {
+        await sequelize.authenticate();
+
+        res.json({
+            success: true,
+            data: {
+                message: "Database connected successfully"
+            },
+            error: null
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            data: null,
+            error: {
+                code: "DB_CONNECTION_ERROR",
+                message: "Could not connect to database",
+                details: {
+                    reason: err.message
+                }
+            }
+        });
+    }
 });
 
 // Catch-all route for unknown endpoints

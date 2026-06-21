@@ -1,6 +1,6 @@
 // Base URL of the backend REST API (Assignment 2 server).
 // All endpoints are served under the /api base path (e.g. /api/auth/login).
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000/api';
 
 // Build request headers, including the simulated-auth headers the backend expects:
 //   x-user-role - used by the backend's authorize() middleware
