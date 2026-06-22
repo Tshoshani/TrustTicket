@@ -1,72 +1,102 @@
 /**
- * controllers/authController.js - Business logic for authentication endpoints.
- *
- * Authentication is simulated (mock data, no real JWT/session store):
- *   - login validates an email + password against the in-memory users array.
- *   - On success it returns the user's public fields plus a mock token.
- *   - logout is a no-op on the server (the client just clears its stored token),
- *     but the endpoint exists so the frontend can call POST /auth/logout.
- *
- * All responses follow the standard format: { success, data, error }.
+ * controllers/authController.js
+ * Authentication controller using MySQL + Sequelize ORM.
+ * Keeps the simple Assignment 2/3 simulated auth behavior.
  */
 
-const users = require('../models/users');
+const { User } = require('../models');
 
-// Remove sensitive fields (password) before sending a user back to the client.
-const toPublicUser = (user) => {
-  const { password, ...publicUser } = user;
-  return publicUser;
-};
+function toPublicUser(userInstance) {
+    const user = userInstance.toJSON ? userInstance.toJSON() : userInstance;
+    const { password, ...publicUser } = user;
+    return publicUser;
+}
+
+function handleServerError(res, code, message, err) {
+    return res.status(500).json({
+        success: false,
+        data: null,
+        error: {
+            code,
+            message,
+            details: {
+                reason: err.message
+            }
+        }
+    });
+}
 
 const authController = {
+    /**
+     * POST /api/auth/login
+     * Body:
+     * {
+     *   "email": "...",
+     *   "password": "..."
+     * }
+     */
+    login: async (req, res) => {
+        try {
+            const { email, password } = req.body || {};
 
-  /**
-   * POST /auth/login
-   * Body: { email, password }
-   * Looks up the user by email and verifies the password.
-   * Returns the public user object plus a mock token on success.
-   */
-  login: (req, res) => {
-    const { email, password } = req.body;
+            if (!email || !password) {
+                const missing = [];
+                if (!email) missing.push("email");
+                if (!password) missing.push("password");
 
-    // Validate that both fields are present
-    if (!email || !password) {
-      const missing = [];
-      if (!email) missing.push("email");
-      if (!password) missing.push("password");
-      return res.status(400).json({
-        success: false, data: null,
-        error: { code: "VALIDATION_ERROR", message: `Missing required field(s): ${missing.join(", ")}`, details: { missing } }
-      });
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: `Missing required field(s): ${missing.join(", ")}`,
+                        details: { missing }
+                    }
+                });
+            }
+
+            const user = await User.findOne({
+                where: { email }
+            });
+
+            if (!user || user.password !== password) {
+                return res.status(401).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "INVALID_CREDENTIALS",
+                        message: "Invalid email or password.",
+                        details: {}
+                    }
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                data: {
+                    user: toPublicUser(user),
+                    token: `demo-token-user-${user.userId}`
+                },
+                error: null
+            });
+        } catch (err) {
+            return handleServerError(res, "LOGIN_FAILED", "Failed to login", err);
+        }
+    },
+
+    /**
+     * POST /api/auth/logout
+     * Keeps simple simulated logout.
+     */
+    logout: async (req, res) => {
+        return res.status(200).json({
+            success: true,
+            data: {
+                message: "Logged out successfully"
+            },
+            error: null
+        });
     }
-
-    // Find the user by email (case-insensitive) and check the password
-    const user = users.find(u => u.email.toLowerCase() === String(email).toLowerCase());
-    if (!user || user.password !== password) {
-      return res.status(401).json({
-        success: false, data: null,
-        error: { code: "INVALID_CREDENTIALS", message: "Invalid email or password.", details: {} }
-      });
-    }
-
-    // Mock token - not a real JWT, just enough for the frontend to store/identify the session
-    const token = `mock-token-${user.userId}`;
-
-    res.status(200).json({
-      success: true,
-      data: { user: toPublicUser(user), token },
-      error: null
-    });
-  },
-
-  /**
-   * POST /auth/logout
-   * Stateless on the server side - the client clears its stored token.
-   * Returns a simple success acknowledgement.
-   */
-  logout: (req, res) => {
-    res.status(200).json({ success: true, data: { message: "Logged out successfully" }, error: null });
-  }
 };
 
 module.exports = authController;
