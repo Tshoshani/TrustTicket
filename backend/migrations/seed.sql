@@ -9,6 +9,15 @@ VALUES
 (4, 'Amit', 'Cohen', 'amit@trustticket.com', 'password123', 'manager', 4.9, 15, 18, true, '2026-05-04 14:00:00', '2026-05-04 14:00:00'),
 (5, 'Dana', 'Katz', 'dana@trustticket.com', 'password123', 'user', 4.2, 2, 3, false, '2026-05-05 16:45:00', '2026-05-05 16:45:00');
 
+INSERT INTO settings
+(user_id, display_name, username, phone, theme, language, notifications, create_date, update_date)
+VALUES
+(1, 'Tomer Shoshani', 'tomer_admin', '', 'light', 'en', true, '2026-05-01 10:00:00', '2026-05-01 10:00:00'),
+(2, 'Shay Silversmith', 'shay_s', '', 'light', 'en', true, '2026-05-02 12:00:00', '2026-05-02 12:00:00'),
+(3, 'Noa Levi', 'noa_l', '', 'light', 'en', true, '2026-05-03 09:30:00', '2026-05-03 09:30:00'),
+(4, 'Amit Cohen', 'amit_c', '', 'light', 'en', true, '2026-05-04 14:00:00', '2026-05-04 14:00:00'),
+(5, 'Dana Katz', 'dana_k', '', 'light', 'en', true, '2026-05-05 16:45:00', '2026-05-05 16:45:00');
+
 INSERT INTO admins
 (user_id, permissions)
 VALUES

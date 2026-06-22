@@ -5,6 +5,7 @@ const Admin = require("./Admin");
 const Ticket = require("./Ticket");
 const Transaction = require("./Transaction");
 const Favorite = require("./Favorite");
+const Setting = require("./Setting");
 
 // User - Admin: one-to-one
 User.hasOne(Admin, {
@@ -86,11 +87,23 @@ Transaction.belongsTo(User, {
   as: "seller"
 });
 
+// User - Setting: one-to-one
+User.hasOne(Setting, {
+  foreignKey: "userId",
+  as: "settings"
+});
+
+Setting.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user"
+});
+
 module.exports = {
   sequelize,
   User,
   Admin,
   Ticket,
   Transaction,
-  Favorite
+  Favorite,
+  Setting
 };
