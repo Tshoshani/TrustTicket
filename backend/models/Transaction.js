@@ -35,17 +35,29 @@ const Transaction = sequelize.define("Transaction", {
   buyerFee: {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0,
-    field: "buyer_fee"
+    field: "buyer_fee",
+    get() {
+        const value = this.getDataValue("buyerFee");
+        return value === null ? 0 : Number(value);
+    }
   },
   sellerFee: {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0,
-    field: "seller_fee"
+    field: "seller_fee",
+    get() {
+        const value = this.getDataValue("sellerFee");
+        return value === null ? 0 : Number(value);
+    }
   },
   totalPrice: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-    field: "total_price"
+    field: "total_price",
+    get() {
+        const value = this.getDataValue("totalPrice");
+        return value === null ? 0 : Number(value);
+    }
   },
   createDate: {
     type: DataTypes.DATE,

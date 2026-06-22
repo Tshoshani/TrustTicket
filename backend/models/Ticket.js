@@ -34,12 +34,20 @@ const Ticket = sequelize.define("Ticket", {
   originalPrice: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-    field: "original_price"
+    field: "original_price",
+    get() {
+        const value = this.getDataValue("originalPrice");
+        return value === null ? 0 : Number(value);
+    }
   },
   salePrice: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-    field: "sale_price"
+    field: "sale_price",
+    get() {
+        const value = this.getDataValue("salePrice");
+        return value === null ? 0 : Number(value);
+    }
   },
   sellerId: {
     type: DataTypes.INTEGER,

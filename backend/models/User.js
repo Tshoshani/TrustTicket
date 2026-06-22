@@ -35,7 +35,11 @@ const User = sequelize.define("User", {
   trustRating: {
     type: DataTypes.DECIMAL(3, 2),
     defaultValue: 0,
-    field: "trust_rating"
+    field: "trust_rating",
+    get() {
+        const value = this.getDataValue("trustRating");
+        return value === null ? 0 : Number(value);
+    }
   },
   ratingCount: {
     type: DataTypes.INTEGER,
