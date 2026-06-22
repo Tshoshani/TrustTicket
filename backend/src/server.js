@@ -18,6 +18,7 @@ const ticketRoutes = require('../routes/ticketRoutes');
 const transactionRoutes = require('../routes/transactionRoutes');
 const dashboardRoutes = require('../routes/dashboardRoutes');
 const settingsRoutes = require('../routes/settingsRoutes');
+const favoriteRoutes = require('../routes/favoriteRoutes');
 
 // Server configuration - the port the API will listen on
 const PORT = 3000;
@@ -43,6 +44,7 @@ app.use('/api/tickets', ticketRoutes);       // Ticket-related endpoints
 app.use('/api/transactions', transactionRoutes); // Transaction-related endpoints
 app.use('/api/dashboard', dashboardRoutes);  // User dashboard summaries
 app.use('/api/settings', settingsRoutes);    // Per-user settings
+app.use('/api/favorites', favoriteRoutes);  // User favorites (junction table) endpoints
 
 // Root route - simple health-check to verify the server is running
 app.get('/', (req, res) => {
