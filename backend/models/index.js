@@ -6,6 +6,7 @@ const Ticket = require("./Ticket");
 const Transaction = require("./Transaction");
 const Favorite = require("./Favorite");
 const Setting = require("./Setting");
+const Review = require("./Review");
 
 // User - Admin: one-to-one
 User.hasOne(Admin, {
@@ -98,6 +99,17 @@ Setting.belongsTo(User, {
   as: "user"
 });
 
+// User - Review: one-to-many (a user receives many reviews)
+User.hasMany(Review, {
+  foreignKey: "userId",
+  as: "reviews"
+});
+
+Review.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user"
+});
+
 module.exports = {
   sequelize,
   User,
@@ -105,5 +117,6 @@ module.exports = {
   Ticket,
   Transaction,
   Favorite,
-  Setting
+  Setting,
+  Review
 };

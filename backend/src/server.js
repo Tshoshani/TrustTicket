@@ -3,8 +3,11 @@
  * Sets up Express, registers global middleware, mounts route handlers,
  * and starts listening on the configured port.
  */
-const { sequelize, User, Ticket, Transaction, Favorite } = require('../models');const express = require('express');
+const { sequelize, User, Ticket, Transaction, Favorite } = require('../models');
+const express = require('express');
+const http = require('http'); // Needed to share one server between Express and Socket.IO
 const cors = require('cors'); // Enables cross-origin requests from the React frontend (different port)
+const { initSocket } = require('./socket'); // Real-time layer (WebSockets via Socket.IO)
 const app = express(); // Create the Express application instance
 
 // Import custom middleware
@@ -19,6 +22,7 @@ const transactionRoutes = require('../routes/transactionRoutes');
 const dashboardRoutes = require('../routes/dashboardRoutes');
 const settingsRoutes = require('../routes/settingsRoutes');
 const favoriteRoutes = require('../routes/favoriteRoutes');
+const aiRoutes = require('../routes/aiRoutes');
 
 // Server configuration - the port the API will listen on
 const PORT = 3000;
@@ -45,6 +49,7 @@ app.use('/api/transactions', transactionRoutes); // Transaction-related endpoint
 app.use('/api/dashboard', dashboardRoutes);  // User dashboard summaries
 app.use('/api/settings', settingsRoutes);    // Per-user settings
 app.use('/api/favorites', favoriteRoutes);  // User favorites (junction table) endpoints
+app.use('/api/ai', aiRoutes);                // AI Ticket Advisor (pricing & trust)
 
 // Root route - simple health-check to verify the server is running
 app.get('/', (req, res) => {
@@ -155,9 +160,16 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start the server and listen for incoming connections
-app.listen(PORT, () => {
+// Wrap the Express app in a raw HTTP server so Socket.IO can share the same port.
+const server = http.createServer(app);
+
+// Attach the Socket.IO real-time layer to the HTTP server.
+initSocket(server);
+
+// Start the server and listen for incoming connections (HTTP + WebSocket).
+server.listen(PORT, () => {
     console.log(`[Trust Ticket] Server is running on http://localhost:${PORT}`);
+    console.log(`[Trust Ticket] WebSocket (Socket.IO) is live on the same port`);
 });
 
-module.exports = app;
+module.exports = { app, server };

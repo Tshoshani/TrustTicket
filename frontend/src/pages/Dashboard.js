@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import Table from '../components/Table';
-import { ticketsAPI, dashboardAPI, usersAPI } from '../services/api';
+import UserProfileModal from '../components/UserProfileModal';
+import { ticketsAPI, dashboardAPI, usersAPI, aiAPI } from '../services/api';
 import '../styles/Dashboard.css';
 
 // Event categories offered when listing a ticket.
@@ -34,12 +35,18 @@ function Dashboard({ user }) {
 
   const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
   const [selectedTicket, setSelectedTicket] = useState(null);
+  const [profileUserId, setProfileUserId] = useState(null); // seller profile modal
 
   // Ticket upload modal
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  // AI price recommendation (inside the "List a Ticket" form)
+  const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   useEffect(() => {
     loadDashboardData();
@@ -114,8 +121,8 @@ function Dashboard({ user }) {
       const f = res.data?.fees;
       if (f) {
         setNotice(
-          `Purchased! Money held in escrow. You pay $${f.buyerPays} ` +
-          `(price $${f.salePrice} + 2.5% fee $${f.buyerFee}).`
+          `Purchased! Money held in escrow. You pay ₪${f.buyerPays} ` +
+          `(price ₪${f.salePrice} + 2.5% fee ₪${f.buyerFee}).`
         );
       }
     }, 'Ticket reserved and released to you (held in escrow).');
@@ -126,8 +133,8 @@ function Dashboard({ user }) {
       const f = res.data?.fees;
       if (f) {
         setNotice(
-          `Barcode used — sale complete! Seller receives $${f.sellerReceives} ` +
-          `(price $${f.salePrice} − 2.5% fee $${f.sellerFee}).`
+          `Barcode used — sale complete! Seller receives ₪${f.sellerReceives} ` +
+          `(price ₪${f.salePrice} − 2.5% fee ₪${f.sellerFee}).`
         );
       }
     }, 'Sale completed.');
@@ -138,6 +145,54 @@ function Dashboard({ user }) {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
     setFormError('');
+  };
+
+  // Ask the AI for a recommended sale price based on the event + original price.
+  // The seller can then choose whether to apply it.
+  const handleGetAiPrice = async () => {
+    setAiError('');
+    setAiSuggestion(null);
+
+    if (!form.originalPrice || Number(form.originalPrice) <= 0) {
+      setAiError('Enter the original price first so the AI can suggest a fair price.');
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const res = await aiAPI.getTicketAdvice({
+        eventType: form.eventType,
+        originalPrice: Number(form.originalPrice),
+        eventDate: form.eventDate || undefined,
+        // Include the seller's current asking price only if they already typed one.
+        salePrice: form.salePrice ? Number(form.salePrice) : undefined,
+      });
+      setAiSuggestion(res.data);
+    } catch (err) {
+      setAiError(err.message || 'Failed to get an AI price recommendation.');
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
+  // Apply the AI's recommended price into the Sale Price field.
+  const applyAiPrice = () => {
+    if (aiSuggestion?.recommendedPrice) {
+      setForm((prev) => ({ ...prev, salePrice: String(aiSuggestion.recommendedPrice) }));
+    }
+  };
+
+  // Reset AI state whenever the form is opened or closed.
+  const openForm = () => {
+    setShowForm(true);
+    setFormError('');
+    setAiSuggestion(null);
+    setAiError('');
+  };
+  const closeForm = () => {
+    setShowForm(false);
+    setAiSuggestion(null);
+    setAiError('');
   };
 
   const handleFormSubmit = async (e) => {
@@ -244,7 +299,7 @@ function Dashboard({ user }) {
       </div>
 
       <div className="dashboard-toolbar">
-        <button className="btn-list-ticket" onClick={() => { setShowForm(true); setFormError(''); }}>
+        <button className="btn-list-ticket" onClick={openForm}>
           + List a Ticket
         </button>
       </div>
@@ -284,7 +339,7 @@ function Dashboard({ user }) {
           </div>
 
           <div className="filter-section">
-            <label htmlFor="min-price">Min Price ($)</label>
+            <label htmlFor="min-price">Min Price (₪)</label>
             <input
               id="min-price"
               type="number"
@@ -296,7 +351,7 @@ function Dashboard({ user }) {
           </div>
 
           <div className="filter-section">
-            <label htmlFor="max-price">Max Price ($)</label>
+            <label htmlFor="max-price">Max Price (₪)</label>
             <input
               id="max-price"
               type="number"
@@ -348,6 +403,7 @@ function Dashboard({ user }) {
                 onVerify={handleVerify}
                 onBuy={handleBuy}
                 onRedeem={handleRedeem}
+                onViewSeller={(id) => setProfileUserId(id)}
               />
             ))}
           </div>
@@ -358,16 +414,16 @@ function Dashboard({ user }) {
 
       {/* Ticket upload modal */}
       {showForm && (
-        <div className="modal-overlay" onClick={() => setShowForm(false)}>
+        <div className="modal-overlay" onClick={closeForm}>
           <div className="modal-content form-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-close" onClick={() => setShowForm(false)}>✕</button>
+            <button className="modal-close" onClick={closeForm}>✕</button>
             <h2>List a Ticket</h2>
             <p className="form-modal-sub">
               After uploading, your ticket is <strong>pending AI verification</strong>. Once it passes,
               it becomes available for buyers.
             </p>
             <form onSubmit={handleFormSubmit} className="ticket-form">
-              <div className="form-group">
+              <div className="form-group form-full">
                 <label htmlFor="eventName">Event Name *</label>
                 <input id="eventName" name="eventName" value={form.eventName} onChange={handleFormChange} placeholder="e.g. Omer Adam Live" />
               </div>
@@ -381,30 +437,60 @@ function Dashboard({ user }) {
                 <label htmlFor="eventDate">Event Date *</label>
                 <input id="eventDate" name="eventDate" type="date" value={form.eventDate} onChange={handleFormChange} />
               </div>
-              <div className="form-group">
+              <div className="form-group form-full">
                 <label htmlFor="venue">Venue</label>
                 <input id="venue" name="venue" value={form.venue} onChange={handleFormChange} placeholder="e.g. Bloomfield Stadium" />
               </div>
               <div className="form-group">
-                <label htmlFor="originalPrice">Original Price ($)</label>
+                <label htmlFor="originalPrice">Original Price (₪)</label>
                 <input id="originalPrice" name="originalPrice" type="number" min="0" value={form.originalPrice} onChange={handleFormChange} placeholder="Optional" />
-              </div>
-              <div className="form-group">
-                <label htmlFor="salePrice">Sale Price ($) *</label>
-                <input id="salePrice" name="salePrice" type="number" min="0" value={form.salePrice} onChange={handleFormChange} placeholder="e.g. 250" />
               </div>
               <div className="form-group">
                 <label htmlFor="barcode">Barcode *</label>
                 <input id="barcode" name="barcode" value={form.barcode} onChange={handleFormChange} placeholder="Ticket barcode string" />
               </div>
+              <div className="form-group form-full">
+                <label htmlFor="salePrice">Sale Price (₪) *</label>
+                <input id="salePrice" name="salePrice" type="number" min="0" value={form.salePrice} onChange={handleFormChange} placeholder="e.g. 250" />
+                <button
+                  type="button"
+                  className="btn-ai-price"
+                  onClick={handleGetAiPrice}
+                  disabled={aiLoading}
+                >
+                  {aiLoading ? 'Analyzing market…' : '✨ Get AI price recommendation'}
+                </button>
 
-              {formError && <div className="error-message">{formError}</div>}
+                {aiError && <div className="ai-inline-error">{aiError}</div>}
 
-              <div className="form-actions">
+                {aiSuggestion && (
+                  <div className="ai-inline-suggestion">
+                    <div className="ai-inline-price">
+                      Recommended price: <strong>₪{aiSuggestion.recommendedPrice}</strong>
+                      <span className="ai-inline-range">
+                        (fair range ₪{aiSuggestion.priceRange.min}–₪{aiSuggestion.priceRange.max})
+                      </span>
+                    </div>
+                    <p className="ai-inline-advice">{aiSuggestion.advice}</p>
+                    <div className="ai-inline-actions">
+                      <button type="button" className="btn-ai-apply" onClick={applyAiPrice}>
+                        Use ₪{aiSuggestion.recommendedPrice}
+                      </button>
+                      <span className="ai-inline-source">
+                        {aiSuggestion.provider === 'gemini' ? 'via Google Gemini (AI)' : 'via local engine'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {formError && <div className="error-message form-full">{formError}</div>}
+
+              <div className="form-actions form-full">
                 <button type="submit" className="btn-save" disabled={submitting}>
                   {submitting ? 'Uploading...' : 'Upload Ticket'}
                 </button>
-                <button type="button" className="btn-reset" onClick={() => setShowForm(false)} disabled={submitting}>
+                <button type="button" className="btn-reset" onClick={closeForm} disabled={submitting}>
                   Cancel
                 </button>
               </div>
@@ -423,8 +509,8 @@ function Dashboard({ user }) {
               <p><strong>Event Type:</strong> {selectedTicket.eventType}</p>
               <p><strong>Venue:</strong> {selectedTicket.venue}</p>
               <p><strong>Date:</strong> {new Date(selectedTicket.eventDate).toLocaleDateString()}</p>
-              <p><strong>Original Price:</strong> ${selectedTicket.originalPrice}</p>
-              <p><strong>Sale Price:</strong> ${selectedTicket.salePrice}</p>
+              <p><strong>Original Price:</strong> ₪{selectedTicket.originalPrice}</p>
+              <p><strong>Sale Price:</strong> ₪{selectedTicket.salePrice}</p>
               <p><strong>Barcode:</strong> {selectedTicket.barcode}</p>
               <p><strong>Status:</strong> {selectedTicket.status}</p>
               <p><strong>AI Verified:</strong> {selectedTicket.verified ? 'Yes' : 'No'}</p>
@@ -438,9 +524,20 @@ function Dashboard({ user }) {
                     {sellersById[selectedTicket.sellerId].verifiedSeller ? ' (Verified)' : ''}</>
                 )}
               </p>
+              <button
+                className="btn-view-seller"
+                onClick={() => { setProfileUserId(selectedTicket.sellerId); setSelectedTicket(null); }}
+              >
+                View seller profile & reviews
+              </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Seller profile modal (avatar + reviews) */}
+      {profileUserId && (
+        <UserProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
       )}
     </div>
   );

@@ -56,6 +56,7 @@ export const usersAPI = {
   getMe: () => apiCall('/users/me'),
   getAll: () => apiCall('/users'),
   getById: (id) => apiCall(`/users/${id}`),
+  getReviews: (id) => apiCall(`/users/${id}/reviews`),
   create: (userData) => apiCall('/users', 'POST', userData),
   update: (id, userData) => apiCall(`/users/${id}`, 'PUT', userData),
   delete: (id) => apiCall(`/users/${id}`, 'DELETE'),
@@ -95,6 +96,12 @@ export const dashboardAPI = {
 export const settingsAPI = {
   get: () => apiCall('/settings'),
   update: (settings) => apiCall('/settings', 'PUT', settings),
+};
+
+// AI API (the AI Ticket Advisor - frontend talks only to the backend)
+export const aiAPI = {
+  // POST /ai/ticket-advice -> { riskLevel, priceRange, recommendation, advice }
+  getTicketAdvice: (input) => apiCall('/ai/ticket-advice', 'POST', input),
 };
 
 export default apiCall;

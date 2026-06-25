@@ -1,0 +1,128 @@
+.live-updates {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.live-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.live-header h1 {
+  margin: 0;
+}
+
+.live-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.online {
+  background: #2ecc71;
+  box-shadow: 0 0 6px #2ecc71;
+}
+
+.status-dot.offline {
+  background: #e74c3c;
+}
+
+.live-hint {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0 16px;
+}
+
+.live-announce {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.live-announce input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.live-announce button {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #7C3AED;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.live-announce button:hover {
+  background: #6D28D9;
+}
+
+.live-feed {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed-empty {
+  color: #999;
+  font-style: italic;
+  padding: 16px;
+  text-align: center;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #f7f8fa;
+  border-left: 4px solid #ccc;
+  font-size: 14px;
+}
+
+.feed-time {
+  color: #999;
+  font-size: 12px;
+  min-width: 72px;
+}
+
+.feed-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #e8eaf0;
+  color: #555;
+}
+
+.feed-text {
+  flex: 1;
+}
+
+.feed-created { border-left-color: #2ecc71; }
+.feed-updated { border-left-color: #f1c40f; }
+.feed-purchased { border-left-color: #7C3AED; }
+.feed-announcement { border-left-color: #9b59b6; }
+.feed-system { border-left-color: #aaa; }

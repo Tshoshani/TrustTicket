@@ -13,6 +13,7 @@ CREATE TABLE users (
   rating_count INT DEFAULT 0,
   successful_deals INT DEFAULT 0,
   verified_seller BOOLEAN DEFAULT FALSE,
+  avatar VARCHAR(255) DEFAULT NULL,
   create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
   update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -83,4 +84,14 @@ CREATE TABLE favorites (
   PRIMARY KEY (user_id, ticket_id),
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id) ON DELETE CASCADE
+);
+
+CREATE TABLE reviews (
+  review_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  reviewer_name VARCHAR(100) NOT NULL,
+  rating DECIMAL(2,1) NOT NULL,
+  comment TEXT,
+  create_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

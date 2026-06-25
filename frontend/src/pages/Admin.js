@@ -83,7 +83,7 @@ function Admin({ user }) {
                 <div className="approval-info">
                   <strong>{t.eventName}</strong>
                   <span>{t.eventType} · {new Date(t.eventDate).toLocaleDateString()} · {t.venue}</span>
-                  <span>Seller: {nameOf(t.sellerId)} · ${t.salePrice} · Barcode: {t.barcode}</span>
+                  <span>Seller: {nameOf(t.sellerId)} · ₪{t.salePrice} · Barcode: {t.barcode}</span>
                 </div>
                 <button className="btn-approve" onClick={() => handleApprove(t)}>
                   ✓ Approve
@@ -121,9 +121,9 @@ function Admin({ user }) {
                     <td>#{tx.ticketId}</td>
                     <td>{nameOf(tx.buyerId)}</td>
                     <td>{nameOf(tx.sellerId)}</td>
-                    <td className="price-highlight">${tx.totalPrice}</td>
-                    <td>${tx.buyerFee}</td>
-                    <td>${tx.sellerFee}</td>
+                    <td className="price-highlight">₪{tx.totalPrice}</td>
+                    <td>₪{tx.buyerFee}</td>
+                    <td>₪{tx.sellerFee}</td>
                     <td>
                       <span className={`status-badge status-${tx.status}`}>{tx.status}</span>
                     </td>

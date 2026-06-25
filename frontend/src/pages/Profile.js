@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Stars from '../components/Stars';
 import Table from '../components/Table';
+import Avatar from '../components/Avatar';
 import { usersAPI, ticketsAPI } from '../services/api';
 import '../styles/Profile.css';
 
 function Profile({ user }) {
   const [profile, setProfile] = useState(null);
   const [listings, setListings] = useState([]);
+  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -25,6 +27,11 @@ function Profile({ user }) {
       const ticketsRes = await ticketsAPI.getAll();
       const mine = (ticketsRes.data || []).filter((t) => t.sellerId === user?.id);
       setListings(mine);
+
+      try {
+        const rev = await usersAPI.getReviews(user?.id);
+        setReviews(rev.data?.reviews || []);
+      } catch (e) { /* reviews are optional */ }
     } catch (err) {
       setError(err.message || 'Failed to load profile');
     } finally {
@@ -36,12 +43,6 @@ function Profile({ user }) {
 
   const p = profile || {};
   const displayName = user?.displayName || `${p.firstName || ''} ${p.lastName || ''}`.trim() || user?.name;
-  const initials = (displayName || 'U')
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
 
   const completedSales = listings.filter((t) => t.status === 'completed').length;
   const activeListings = listings.filter((t) => t.status === 'available' || t.status === 'pending').length;
@@ -51,7 +52,7 @@ function Profile({ user }) {
       {error && <div className="error-message">{error}</div>}
 
       <div className="profile-card">
-        <div className="profile-avatar">{initials}</div>
+        <Avatar src={p.avatar} name={displayName} size={90} />
         <div className="profile-info">
           <h1>
             {displayName}
@@ -96,6 +97,25 @@ function Profile({ user }) {
           <div className="empty-state"><p>You haven't listed any tickets yet.</p></div>
         ) : (
           <Table tickets={listings} />
+        )}
+      </div>
+
+      <div className="profile-reviews">
+        <h2>Reviews ({reviews.length})</h2>
+        {reviews.length === 0 ? (
+          <div className="empty-state"><p>No reviews yet.</p></div>
+        ) : (
+          <ul className="review-list">
+            {reviews.map((r) => (
+              <li key={r.reviewId} className="review-item">
+                <div className="review-head">
+                  <span className="review-name">{r.reviewerName}</span>
+                  <Stars rating={r.rating} size={13} />
+                </div>
+                <p className="review-comment">{r.comment}</p>
+              </li>
+            ))}
+          </ul>
         )}
       </div>
     </div>

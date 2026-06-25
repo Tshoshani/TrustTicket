@@ -20,6 +20,8 @@ function Navbar({ user, onLogout }) {
 
       <ul className="navbar-menu">
         <li><Link to="/dashboard">Dashboard</Link></li>
+        <li><Link to="/live">Live</Link></li>
+        <li><Link to="/ai">AI Advisor</Link></li>
         <li><Link to="/profile">Profile</Link></li>
         {isStaff && <li><Link to="/admin">Admin</Link></li>}
         <li><Link to="/settings">Settings</Link></li>

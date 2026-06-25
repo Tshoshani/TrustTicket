@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Admin from './pages/Admin';
+import LiveUpdates from './pages/LiveUpdates';
+import AIAdvisor from './pages/AIAdvisor';
 
 // Components
 import Navbar from './components/Navbar';
@@ -126,6 +128,14 @@ function App() {
             <Route
               path="/profile"
               element={isAuthenticated ? <Profile user={user} /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/live"
+              element={isAuthenticated ? <LiveUpdates user={user} /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/ai"
+              element={isAuthenticated ? <AIAdvisor /> : <Navigate to="/login" />}
             />
             <Route
               path="/admin"

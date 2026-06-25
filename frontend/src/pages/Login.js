@@ -96,10 +96,16 @@ function Login({ onLogin }) {
           </button>
 
           <div className="login-info">
-            <p><strong>Demo Credentials:</strong></p>
-            <p>Admin: tomer@trustticket.com</p>
-            <p>User: shay@trustticket.com</p>
-            <p>Password: password123</p>
+            <p><strong>Demo Credentials</strong> (password for all: <code>password123</code>)</p>
+            <table className="demo-creds">
+              <tbody>
+                <tr><td>Admin</td><td>tomer@trustticket.com</td></tr>
+                <tr><td>Manager</td><td>amit@trustticket.com</td></tr>
+                <tr><td>User</td><td>shay@trustticket.com</td></tr>
+                <tr><td>User</td><td>noa@trustticket.com</td></tr>
+                <tr><td>User</td><td>dana@trustticket.com</td></tr>
+              </tbody>
+            </table>
           </div>
         </form>
       </div>

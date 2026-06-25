@@ -11,13 +11,13 @@
 }
 
 .dashboard-header h1 {
-  font-size: 32px;
-  color: #282c34;
+  font-size: 34px;
+  color: var(--tt-text);
   margin: 0 0 10px;
 }
 
 .dashboard-header p {
-  color: #666;
+  color: var(--tt-text-muted);
   font-size: 16px;
   margin: 0;
 }
@@ -30,16 +30,23 @@
 }
 
 .stat-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: var(--tt-surface);
+  border-radius: var(--tt-radius);
+  padding: 22px 20px;
+  box-shadow: var(--tt-shadow-sm);
   text-align: center;
+  border-top: 3px solid var(--tt-primary);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--tt-shadow);
 }
 
 .stat-card h3 {
-  color: #666;
-  font-size: 14px;
+  color: var(--tt-text-muted);
+  font-size: 13px;
   font-weight: 600;
   margin: 0 0 10px;
   text-transform: uppercase;
@@ -47,9 +54,10 @@
 }
 
 .stat-number {
-  font-size: 28px;
+  font-family: var(--tt-font-head);
+  font-size: 30px;
   font-weight: 700;
-  color: #61dafb;
+  color: var(--tt-primary);
   margin: 0;
 }
 
@@ -70,7 +78,7 @@
 
 .filter-section label {
   font-weight: 600;
-  color: #282c34;
+  color: #1E1B2E;
   font-size: 14px;
 }
 
@@ -97,8 +105,8 @@
 .filter-section select:focus,
 .filter-section input:focus {
   outline: none;
-  border-color: #61dafb;
-  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.1);
+  border-color: var(--tt-primary);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
 }
 
 /* Toolbar with the "List a Ticket" button */
@@ -109,20 +117,21 @@
 }
 
 .btn-list-ticket {
-  background-color: #51cf66;
+  background-color: var(--tt-cta);
   color: white;
   border: none;
-  padding: 12px 22px;
-  border-radius: 6px;
+  padding: 12px 24px;
+  border-radius: 999px;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s;
+  box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+  transition: background-color 0.2s, transform 0.2s;
 }
 
 .btn-list-ticket:hover {
-  background-color: #40c057;
-  transform: scale(1.02);
+  background-color: var(--tt-cta-dark);
+  transform: translateY(-1px);
 }
 
 /* A horizontal row of compact filters */
@@ -169,16 +178,36 @@
   margin: 0 0 18px;
 }
 
+.ticket-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 16px;
+}
+
 .ticket-form .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
+}
+
+.ticket-form .form-full {
+  grid-column: 1 / -1;
+}
+
+.form-modal {
+  max-width: 580px;
+}
+
+@media (max-width: 560px) {
+  .ticket-form {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ticket-form label {
   font-weight: 600;
-  color: #282c34;
+  color: #1E1B2E;
   font-size: 14px;
 }
 
@@ -194,8 +223,8 @@
 .ticket-form input:focus,
 .ticket-form select:focus {
   outline: none;
-  border-color: #61dafb;
-  box-shadow: 0 0 0 3px rgba(97, 218, 251, 0.1);
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
 }
 
 .ticket-form .form-actions {
@@ -205,8 +234,8 @@
 }
 
 .btn-save {
-  background-color: #61dafb;
-  color: #282c34;
+  background-color: #7C3AED;
+  color: #fff;
   border: none;
   padding: 12px 22px;
   border-radius: 6px;
@@ -272,9 +301,9 @@
 }
 
 .toggle-btn.active {
-  background-color: #61dafb;
-  color: #282c34;
-  border-color: #61dafb;
+  background-color: #7C3AED;
+  color: #fff;
+  border-color: #7C3AED;
 }
 
 .tickets-section {
@@ -283,9 +312,9 @@
 
 .tickets-section h2 {
   font-size: 24px;
-  color: #282c34;
+  color: #1E1B2E;
   margin-bottom: 20px;
-  border-bottom: 2px solid #61dafb;
+  border-bottom: 2px solid #7C3AED;
   padding-bottom: 10px;
 }
 
@@ -362,7 +391,7 @@
 }
 
 .modal-content h2 {
-  color: #282c34;
+  color: #1E1B2E;
   margin-top: 0;
   margin-bottom: 20px;
 }
@@ -382,7 +411,7 @@
 }
 
 .modal-details strong {
-  color: #282c34;
+  color: #1E1B2E;
   font-weight: 600;
 }
 
@@ -421,3 +450,76 @@
     padding: 20px;
   }
 }
+
+/* ---- Inline AI price recommendation (List a Ticket form) ---- */
+.btn-ai-price {
+  margin-top: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px dashed #7C3AED;
+  border-radius: 8px;
+  background: #F5F3FF;
+  color: #6D28D9;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-ai-price:hover:not(:disabled) { background: #ECE7FB; }
+.btn-ai-price:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.ai-inline-error {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #c0392b;
+}
+
+.ai-inline-suggestion {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #FAF9FE;
+  border: 1px solid #E7E3F0;
+}
+.ai-inline-price { font-size: 14px; color: #222; }
+.ai-inline-price strong { color: #6D28D9; font-size: 16px; }
+.ai-inline-range { color: #777; font-size: 12px; margin-left: 6px; }
+.ai-inline-advice {
+  font-size: 13px;
+  line-height: 1.55;
+  color: #444;
+  margin: 8px 0 10px;
+}
+.ai-inline-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-ai-apply {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  background: #7C3AED;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn-ai-apply:hover { background: #6D28D9; }
+.ai-inline-source { font-size: 11px; color: #999; }
+
+/* View seller profile button (ticket details modal) */
+.btn-view-seller {
+  margin-top: 8px;
+  width: 100%;
+  padding: 11px;
+  border: 1px solid var(--tt-primary);
+  border-radius: var(--tt-radius-sm);
+  background: var(--tt-primary-soft);
+  color: var(--tt-primary-dark);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.btn-view-seller:hover { background: #ECE7FB; }

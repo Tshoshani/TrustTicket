@@ -17,6 +17,9 @@ router.get('/', authorize(['admin', 'manager']), userController.getAllUsers);
 // IMPORTANT: must be declared BEFORE "/:id" so "me" is not parsed as an id.
 router.get('/me', userController.getMe);
 
+// GET /users/:id/reviews - Return all reviews left for a user (public profile)
+router.get('/:id/reviews', userController.getUserReviews);
+
 // GET /users/:id - Return a single user by their numeric ID (no role restriction)
 router.get('/:id', userController.getUserById);
 

@@ -1,0 +1,145 @@
+.ai-advisor {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.ai-advisor h1 {
+  margin: 0 0 8px;
+}
+
+.ai-intro {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.ai-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: #f7f8fa;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.ai-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.ai-form input,
+.ai-form select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.ai-form button {
+  margin-top: 4px;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background: #7C3AED;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ai-form button:disabled {
+  background: #9aa9e8;
+  cursor: not-allowed;
+}
+
+.ai-form button:hover:not(:disabled) {
+  background: #6D28D9;
+}
+
+.ai-error {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: #fdecea;
+  color: #c0392b;
+  border-left: 4px solid #c0392b;
+  font-size: 14px;
+}
+
+.ai-result {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e3e6ee;
+  border-left: 6px solid #ccc;
+}
+
+.ai-result.risk-low { border-left-color: #2ecc71; }
+.ai-result.risk-medium { border-left-color: #f1c40f; }
+.ai-result.risk-high { border-left-color: #e74c3c; }
+
+.ai-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ai-reco {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+}
+
+.ai-risk-badge {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 12px;
+  color: #fff;
+}
+
+.ai-risk-badge.risk-low { background: #2ecc71; }
+.ai-risk-badge.risk-medium { background: #f1c40f; color: #333; }
+.ai-risk-badge.risk-high { background: #e74c3c; }
+
+.ai-price-range {
+  font-size: 15px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.ai-advice {
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  margin: 0;
+}
+
+.ai-ticket-preview {
+  background: #fff;
+  border: 1px solid #e3e6ee;
+  border-radius: 6px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.ai-meta {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  color: #888;
+}

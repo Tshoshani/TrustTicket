@@ -1,3 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;500;600;700&family=Rubik:wght@400;500;600;700&display=swap');
+
+/* ===========================================================================
+   Design tokens (TrustTicket design system)
+   Trust purple + transaction green. Fonts: Rubik (headings) / Nunito Sans (body).
+   =========================================================================== */
+:root {
+  --tt-primary: #7C3AED;       /* trust purple */
+  --tt-primary-dark: #6D28D9;
+  --tt-primary-soft: #F5F3FF;
+  --tt-secondary: #A78BFA;
+  --tt-cta: #22C55E;           /* transaction green */
+  --tt-cta-dark: #16A34A;
+
+  --tt-bg: #F5F6F8;
+  --tt-surface: #FFFFFF;
+  --tt-text: #1F2430;
+  --tt-text-muted: #667085;
+  --tt-border: #E5E7EB;
+
+  --tt-warning: #D97706;
+  --tt-danger: #DC2626;
+  --tt-info: #2563EB;
+
+  --tt-radius: 14px;
+  --tt-radius-sm: 8px;
+  --tt-shadow-sm: 0 1px 3px rgba(28, 25, 50, 0.08);
+  --tt-shadow: 0 6px 20px rgba(28, 25, 50, 0.10);
+  --tt-shadow-lg: 0 14px 40px rgba(28, 25, 50, 0.16);
+
+  --tt-font-head: 'Rubik', system-ui, sans-serif;
+  --tt-font-body: 'Nunito Sans', system-ui, sans-serif;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -5,12 +39,27 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--tt-font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+  background-color: var(--tt-bg);
+  color: var(--tt-text);
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--tt-font-head);
+  color: var(--tt-text);
+}
+
+/* Safety net for edge cases: long unbroken text (event names, venues, emails)
+   should wrap instead of overflowing or stretching the layout. */
+h1, h2, h3, h4, h5, p, span, a, td, th, label, li, strong {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+img {
+  max-width: 100%;
 }
 
 .app {
@@ -145,69 +194,89 @@ body {
 
 /* Navbar */
 .navbar {
-  background-color: #282c34;
-  padding: 15px 30px;
+  background-color: #15161A;
+  padding: 14px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
 .navbar-brand {
-  font-size: 24px;
-  font-weight: bold;
+  font-family: var(--tt-font-head);
+  font-size: 22px;
+  font-weight: 700;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
+.navbar-brand a {
+  color: white;
+  text-decoration: none;
+}
+
 .navbar-menu {
   display: flex;
-  gap: 30px;
+  gap: 8px;
   align-items: center;
   list-style: none;
 }
 
 .navbar-menu a {
-  color: white;
+  color: rgba(255, 255, 255, 0.88);
   text-decoration: none;
-  font-size: 16px;
-  transition: color 0.3s;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .navbar-menu a:hover {
-  color: #61dafb;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.16);
 }
 
 .navbar-user {
   display: flex;
-  gap: 15px;
+  gap: 14px;
   align-items: center;
 }
 
+.user-info {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
 .logout-btn {
-  background-color: #ff6b6b;
-  border: none;
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   color: white;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 8px 18px;
+  border-radius: 999px;
   cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.3s;
+  font-weight: 600;
+  transition: background-color 0.2s;
 }
 
 .logout-btn:hover {
-  background-color: #ff5252;
+  background-color: rgba(255, 255, 255, 0.28);
 }
 
 /* Footer */
 .footer {
-  background-color: #282c34;
-  color: white;
+  background-color: #1E1B2E;
+  color: rgba(255, 255, 255, 0.85);
   text-align: center;
-  padding: 20px;
-  margin-top: 40px;
+  padding: 24px;
+  margin-top: 48px;
 }
 
 .footer p {

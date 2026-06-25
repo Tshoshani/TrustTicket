@@ -4,7 +4,7 @@
  * Replaces the old in-memory users array while keeping the same API contract.
  */
 
-const { User } = require('../models');
+const { User, Review } = require('../models');
 
 const toPublicUser = (userInstance) => {
   const user = userInstance.toJSON ? userInstance.toJSON() : userInstance;
@@ -27,6 +27,53 @@ function handleServerError(res, code, message, err) {
 }
 
 const userController = {
+  /**
+   * GET /users/:id/reviews
+   * Returns all reviews left for a given user (seller), newest first.
+   * Demonstrates the User hasMany Review one-to-many relationship.
+   */
+  getUserReviews: async (req, res) => {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (Number.isNaN(id)) {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: { code: 'VALIDATION_ERROR', message: 'Invalid user ID. Must be a number.', details: { field: 'id' } }
+        });
+      }
+
+      const user = await User.findByPk(id, {
+        include: [{ model: Review, as: 'reviews' }]
+      });
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          data: null,
+          error: { code: 'NOT_FOUND', message: `User with ID ${id} not found`, details: {} }
+        });
+      }
+
+      const reviews = (user.reviews || [])
+        .map((r) => r.toJSON())
+        .sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
+
+      return res.status(200).json({
+        success: true,
+        data: {
+          userId: user.userId,
+          trustRating: user.trustRating,
+          ratingCount: user.ratingCount,
+          reviews
+        },
+        error: null
+      });
+    } catch (err) {
+      return handleServerError(res, 'USER_REVIEWS_FAILED', 'Failed to load user reviews', err);
+    }
+  },
+
   /**
    * GET /users
    * Returns all users from MySQL without passwords.

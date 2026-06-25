@@ -56,6 +56,11 @@ const User = sequelize.define("User", {
     defaultValue: false,
     field: "verified_seller"
   },
+  avatar: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    field: "avatar"
+  },
   createDate: {
     type: DataTypes.DATE,
     field: "create_date"

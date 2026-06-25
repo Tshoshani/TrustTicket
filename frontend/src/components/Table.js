@@ -36,8 +36,8 @@ function Table({ tickets, onRowClick }) {
               <td>{ticket.eventType}</td>
               <td>{ticket.venue}</td>
               <td>{new Date(ticket.eventDate).toLocaleDateString()}</td>
-              <td>${ticket.originalPrice}</td>
-              <td className="price-highlight">${ticket.salePrice}</td>
+              <td>₪{ticket.originalPrice}</td>
+              <td className="price-highlight">₪{ticket.salePrice}</td>
               <td>
                 <span className={`status-badge status-${ticket.status}`}>
                   {ticket.status}

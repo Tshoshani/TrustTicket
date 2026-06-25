@@ -10,7 +10,7 @@
 
 .admin-header h1 {
   font-size: 30px;
-  color: #282c34;
+  color: #1E1B2E;
   margin: 0 0 6px;
 }
 
@@ -29,9 +29,9 @@
 
 .admin-section h2 {
   font-size: 20px;
-  color: #282c34;
+  color: #1E1B2E;
   margin: 0 0 4px;
-  border-bottom: 2px solid #61dafb;
+  border-bottom: 2px solid #7C3AED;
   padding-bottom: 10px;
 }
 
@@ -68,11 +68,11 @@
 
 .approval-info strong {
   font-size: 15px;
-  color: #282c34;
+  color: #1E1B2E;
 }
 
 .btn-approve {
-  background-color: #51cf66;
+  background-color: #22C55E;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -85,7 +85,7 @@
 }
 
 .btn-approve:hover {
-  background-color: #40c057;
+  background-color: #16A34A;
 }
 
 /* Transaction status colors (reuse the marketplace palette) */

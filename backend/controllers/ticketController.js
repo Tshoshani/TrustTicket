@@ -5,6 +5,11 @@
  */
 
 const { Ticket, User, Transaction } = require('../models');
+const {
+    emitTicketCreated,
+    emitTicketUpdated,
+    emitTicketPurchased
+} = require('../src/socket');
 
 const FEE_RATE = 0.025;
 
@@ -255,6 +260,17 @@ const ticketController = {
                 updateDate: new Date()
             });
 
+            // Real-time: tell every connected client a new listing appeared.
+            emitTicketCreated({
+                ticketId: newTicket.ticketId,
+                eventName: newTicket.eventName,
+                eventType: newTicket.eventType,
+                venue: newTicket.venue,
+                salePrice: newTicket.salePrice,
+                status: newTicket.status,
+                sellerId: newTicket.sellerId
+            });
+
             return res.status(201).json({
                 success: true,
                 data: {
@@ -335,6 +351,16 @@ const ticketController = {
                 venue: body.venue || "Unknown venue",
                 originalPrice: body.originalPrice || body.salePrice,
                 updateDate: new Date()
+            });
+
+            // Real-time: notify clients the listing changed.
+            emitTicketUpdated({
+                ticketId: ticket.ticketId,
+                eventName: ticket.eventName,
+                eventType: ticket.eventType,
+                venue: ticket.venue,
+                salePrice: ticket.salePrice,
+                status: ticket.status
             });
 
             return res.status(200).json({
@@ -445,6 +471,17 @@ const ticketController = {
                 verified: true,
                 status: "available",
                 updateDate: new Date()
+            });
+
+            // Real-time: a ticket becoming verified/available is a meaningful update.
+            emitTicketUpdated({
+                ticketId: ticket.ticketId,
+                eventName: ticket.eventName,
+                eventType: ticket.eventType,
+                venue: ticket.venue,
+                salePrice: ticket.salePrice,
+                status: ticket.status,
+                verified: ticket.verified
             });
 
             return res.status(200).json({
@@ -563,6 +600,16 @@ const ticketController = {
                 totalPrice: fees.salePrice,
                 createDate: new Date(),
                 updateDate: new Date()
+            });
+
+            // Real-time: announce the purchase to every connected client.
+            emitTicketPurchased({
+                ticketId: ticket.ticketId,
+                eventName: ticket.eventName,
+                status: ticket.status,
+                buyerId,
+                sellerId: ticket.sellerId,
+                salePrice: fees.salePrice
             });
 
             return res.status(201).json({

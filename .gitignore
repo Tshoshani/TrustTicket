@@ -31,3 +31,8 @@ yarn-error.log*
 /TrustTicket_AS3_211822457_206579674/
 /TrustTicket_AS3_211822457_206579674.zip
 /_fix/
+
+# Grading spreadsheets and OS artifacts (not source)
+assignment*.xlsx
+desktop.ini
+**/desktop.ini

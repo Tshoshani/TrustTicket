@@ -19,7 +19,7 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #61dafb, #4fa8d5);
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
   color: white;
   display: flex;
   align-items: center;
@@ -32,7 +32,7 @@
 .profile-info h1 {
   margin: 0 0 8px;
   font-size: 26px;
-  color: #282c34;
+  color: #1E1B2E;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -81,7 +81,7 @@
 .profile-stat-num {
   font-size: 26px;
   font-weight: 700;
-  color: #61dafb;
+  color: #7C3AED;
 }
 
 .profile-stat-label {
@@ -94,9 +94,9 @@
 
 .profile-listings h2 {
   font-size: 22px;
-  color: #282c34;
+  color: #1E1B2E;
   margin-bottom: 16px;
-  border-bottom: 2px solid #61dafb;
+  border-bottom: 2px solid #7C3AED;
   padding-bottom: 10px;
 }
 
@@ -129,3 +129,53 @@
     align-items: center;
   }
 }
+
+/* Reviews section on the profile page */
+.profile-reviews {
+  margin-top: 30px;
+}
+
+.profile-reviews h2 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.profile-reviews .review-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.profile-reviews .review-item {
+  background: var(--tt-surface);
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-sm);
+  padding: 14px 16px;
+}
+
+.profile-reviews .review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.profile-reviews .review-name {
+  font-weight: 700;
+  color: var(--tt-text);
+  font-size: 14px;
+}
+
+.profile-reviews .review-comment {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--tt-text-muted);
+}
+
+[data-theme="dark"] .profile-reviews .review-item { background: #21252e; border-color: #333a45; }
+[data-theme="dark"] .profile-reviews .review-name { color: #f0f0f0; }
