@@ -1,0 +1,199 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  /* Concert/event themed hero: dark gradient overlay over a live-show photo.
+     The gradient also acts as a graceful fallback if the photo can't load. */
+  background:
+    linear-gradient(135deg, rgba(21, 22, 26, 0.82) 0%, rgba(45, 42, 56, 0.72) 100%),
+    url('https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+}
+
+.login-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-header h1 {
+  font-size: 32px;
+  color: #1E1B2E;
+  margin: 0 0 10px;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #1E1B2E;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #7C3AED;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.error-message {
+  background-color: #fee;
+  color: #c33;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border-left: 4px solid #c33;
+}
+
+.login-btn {
+  padding: 12px;
+  background: linear-gradient(135deg, #15161A 0%, #2D2A38 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-switch {
+  text-align: center;
+  font-size: 13px;
+  color: #5B5870;
+}
+
+.login-switch p {
+  margin: 0;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #6D28D9;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+
+.link-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-info {
+  background-color: #F5F3FF;
+  border: 1px solid #E7E3F0;
+  padding: 14px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #5B5870;
+  line-height: 1.6;
+}
+
+.login-info p {
+  margin: 0 0 8px;
+}
+
+.login-info code {
+  background: #ECE7FB;
+  color: #6D28D9;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.demo-creds {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.demo-creds td {
+  padding: 3px 0;
+  font-size: 12px;
+}
+
+.demo-creds td:first-child {
+  color: #6D28D9;
+  font-weight: 700;
+  width: 70px;
+}
+
+.demo-creds td:last-child {
+  color: #4B4660;
+  font-family: monospace;
+}
+
+.login-container {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 25px;
+  }
+
+  .login-header h1 {
+    font-size: 24px;
+  }
+}

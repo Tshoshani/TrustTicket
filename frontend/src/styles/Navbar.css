@@ -1,0 +1,112 @@
+.navbar {
+  background: linear-gradient(180deg, #20212A 0%, #141419 100%);
+  padding: 14px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  /* subtle brand accent line under the bar */
+  border-bottom: 2px solid transparent;
+  border-image: linear-gradient(90deg, #7C3AED, #A06A8C, #22C55E) 1;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.navbar-brand span {
+  filter: drop-shadow(0 0 6px rgba(124, 58, 237, 0.7));
+}
+
+.navbar-brand {
+  font-family: var(--tt-font-head);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-brand a {
+  color: white;
+  text-decoration: none;
+}
+
+.navbar-menu {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-menu a {
+  color: rgba(255, 255, 255, 0.88);
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.navbar-menu a:hover {
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.navbar-user {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.user-info {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.logout-btn {
+  background-color: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 8px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.28);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .navbar-brand {
+    font-size: 20px;
+  }
+
+  .navbar-menu {
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .navbar-user {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

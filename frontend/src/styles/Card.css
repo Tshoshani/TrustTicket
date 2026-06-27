@@ -1,0 +1,301 @@
+/* ===========================================================================
+   Ticket card - clean, neutral, professional. Keeps a subtle ticket-stub shape
+   (perforation + price stub) but uses mostly white/neutral surfaces with only a
+   restrained, muted accent per event type.
+   =========================================================================== */
+.ticket-card {
+  --accent: #6B7280;
+  --accent-soft: #F3F4F6;
+  position: relative;
+  background: var(--tt-surface);
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius);
+  box-shadow: var(--tt-shadow-sm);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--tt-shadow);
+}
+
+/* Muted, desaturated event-type accents (used only as a thin line + chip) */
+.ticket-card.type-concert  { --accent: #6D5FA6; --accent-soft: #F0EEF8; }
+.ticket-card.type-festival { --accent: #A06A8C; --accent-soft: #F7EFF4; }
+.ticket-card.type-sports   { --accent: #5572A0; --accent-soft: #EEF2F8; }
+.ticket-card.type-theater  { --accent: #A0824F; --accent-soft: #F6F1E9; }
+.ticket-card.type-party    { --accent: #4F938C; --accent-soft: #ECF5F3; }
+.ticket-card.type-standup  { --accent: #A06B4F; --accent-soft: #F6EEE9; }
+.ticket-card.type-other    { --accent: #6B7280; --accent-soft: #F3F4F6; }
+
+/* Thin accent line across the very top */
+.ticket-card::before {
+  content: "";
+  display: block;
+  height: 3px;
+  background: var(--accent);
+}
+
+/* Neutral header on white */
+.ticket-top {
+  background: var(--tt-surface);
+  padding: 16px 18px 12px;
+}
+
+.ticket-type {
+  display: inline-block;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+.ticket-title {
+  font-family: var(--tt-font-head);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--tt-text);
+  margin: 0 0 4px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.ticket-venue {
+  font-size: 13px;
+  color: var(--tt-text-muted);
+  margin: 0;
+}
+
+/* Perforation divider with side notches */
+.ticket-perforation {
+  position: relative;
+  height: 0;
+  border-top: 1px dashed var(--tt-border);
+  margin: 4px 14px 0;
+}
+
+.notch {
+  position: absolute;
+  top: -9px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--tt-bg);
+  border: 1px solid var(--tt-border);
+}
+
+.notch-left { left: -23px; }
+.notch-right { right: -23px; }
+
+.ticket-body {
+  padding: 14px 18px 6px;
+  flex: 1;
+}
+
+.ticket-meta {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.meta-row {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #F7F7F9;
+  border-radius: var(--tt-radius-sm);
+  padding: 8px 10px;
+}
+
+.meta-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--tt-text-muted);
+  font-weight: 600;
+}
+
+.meta-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tt-text);
+}
+
+/* Seller + trust rating block (clickable) */
+.ticket-seller {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 4px 0 12px;
+  padding: 10px;
+  background: #FAFAFB;
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-sm);
+  font-size: 13px;
+}
+
+.ticket-seller-btn {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.ticket-seller-btn:hover {
+  background: #F3F0FA;
+  border-color: var(--tt-secondary);
+}
+
+.seller-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.seller-name {
+  font-weight: 700;
+  color: var(--tt-text);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.verified-badge {
+  background: #ECFDF3;
+  color: #15803D;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.trust-rating {
+  color: #92702A;
+  font-weight: 600;
+}
+
+.deals-count {
+  color: var(--tt-text-muted);
+  font-weight: 400;
+}
+
+.ticket-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-available { background: #ECFDF3; color: #15803D; }
+.status-completed,
+.status-sold      { background: #FEF2F2; color: #B42318; }
+.status-pending   { background: #FFF8EB; color: #B54708; }
+.status-reserved  { background: #EFF4FF; color: #1849A9; }
+
+.ai-badge {
+  background: #F3F4F6;
+  color: #4B5563;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* Stub: price + actions */
+.ticket-stub {
+  border-top: 1px dashed var(--tt-border);
+  margin: 8px 14px 0;
+  padding: 14px 4px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ticket-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.price-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--tt-text-muted);
+  font-weight: 600;
+}
+
+.price-value {
+  font-family: var(--tt-font-head);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tt-text);
+}
+
+.ticket-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-btn {
+  width: 100%;
+  padding: 11px;
+  border: none;
+  border-radius: var(--tt-radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s;
+}
+
+.btn-ghost {
+  background: #F3F4F6;
+  color: #374151;
+}
+.btn-ghost:hover { background: #E5E7EB; }
+
+.btn-buy { background: var(--tt-cta-dark); color: #fff; }
+.btn-buy:hover { background: #15803D; }
+
+.btn-verify { background: #1F2937; color: #fff; }
+.btn-verify:hover { background: #111827; }
+
+.btn-redeem { background: var(--tt-primary); color: #fff; }
+.btn-redeem:hover { background: var(--tt-primary-dark); }
+
+/* Dark theme tweaks */
+[data-theme="dark"] .ticket-card { background: #21252e; border-color: #333a45; }
+[data-theme="dark"] .ticket-top { background: #21252e; }
+[data-theme="dark"] .ticket-title { color: #f0f0f0; }
+[data-theme="dark"] .meta-row { background: #1a1d24; }
+[data-theme="dark"] .meta-value, [data-theme="dark"] .price-value { color: #f0f0f0; }
+[data-theme="dark"] .ticket-seller { background: #1a1d24; border-color: #3a3f4a; }
+[data-theme="dark"] .seller-name { color: #f0f0f0; }
+[data-theme="dark"] .notch { background: #15171c; border-color: #3a3f4a; }
+
+@media (max-width: 768px) {
+  .ticket-title { font-size: 16px; }
+  .price-value { font-size: 21px; }
+}

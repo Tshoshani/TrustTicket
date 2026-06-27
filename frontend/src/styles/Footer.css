@@ -1,0 +1,29 @@
+.footer {
+  background-color: #1E1B2E;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  margin-top: auto;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.footer p {
+  margin: 8px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.footer p:first-child {
+  font-weight: 600;
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 15px 10px;
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+}

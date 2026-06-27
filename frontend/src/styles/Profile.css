@@ -1,0 +1,181 @@
+.profile-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7C3AED, #6D28D9);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.profile-info h1 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  color: #1E1B2E;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-role,
+.profile-email {
+  margin: 2px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.profile-rating {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rating-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #999;
+  font-weight: 600;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.profile-stat {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-stat-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: #7C3AED;
+}
+
+.profile-stat-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  font-weight: 600;
+}
+
+.profile-listings h2 {
+  font-size: 22px;
+  color: #1E1B2E;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #7C3AED;
+  padding-bottom: 10px;
+}
+
+/* Dark theme */
+[data-theme="dark"] .profile-card,
+[data-theme="dark"] .profile-stat {
+  background-color: #21252e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .profile-info h1,
+[data-theme="dark"] .profile-listings h2 {
+  color: #f0f0f0;
+}
+
+[data-theme="dark"] .profile-role,
+[data-theme="dark"] .profile-email {
+  color: #b5b5b5;
+}
+
+@media (max-width: 768px) {
+  .profile-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .profile-info h1 {
+    justify-content: center;
+  }
+  .profile-rating {
+    align-items: center;
+  }
+}
+
+/* Reviews section on the profile page */
+.profile-reviews {
+  margin-top: 30px;
+}
+
+.profile-reviews h2 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.profile-reviews .review-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.profile-reviews .review-item {
+  background: var(--tt-surface);
+  border: 1px solid var(--tt-border);
+  border-radius: var(--tt-radius-sm);
+  padding: 14px 16px;
+}
+
+.profile-reviews .review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.profile-reviews .review-name {
+  font-weight: 700;
+  color: var(--tt-text);
+  font-size: 14px;
+}
+
+.profile-reviews .review-comment {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--tt-text-muted);
+}
+
+[data-theme="dark"] .profile-reviews .review-item { background: #21252e; border-color: #333a45; }
+[data-theme="dark"] .profile-reviews .review-name { color: #f0f0f0; }

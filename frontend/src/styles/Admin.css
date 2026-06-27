@@ -1,0 +1,126 @@
+.admin-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.admin-header {
+  margin-bottom: 24px;
+}
+
+.admin-header h1 {
+  font-size: 30px;
+  color: #1E1B2E;
+  margin: 0 0 6px;
+}
+
+.admin-header p {
+  color: #666;
+  margin: 0;
+}
+
+.admin-section {
+  background: white;
+  border-radius: 10px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}
+
+.admin-section h2 {
+  font-size: 20px;
+  color: #1E1B2E;
+  margin: 0 0 4px;
+  border-bottom: 2px solid #7C3AED;
+  padding-bottom: 10px;
+}
+
+.admin-sub {
+  color: #888;
+  font-size: 13px;
+  margin: 10px 0 18px;
+}
+
+.approval-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.approval-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: #f7f9fc;
+  border-radius: 8px;
+  border-left: 4px solid #ffd43b;
+}
+
+.approval-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: #555;
+}
+
+.approval-info strong {
+  font-size: 15px;
+  color: #1E1B2E;
+}
+
+.btn-approve {
+  background-color: #22C55E;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.btn-approve:hover {
+  background-color: #16A34A;
+}
+
+/* Transaction status colors (reuse the marketplace palette) */
+.status-escrow_pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-ticket_released {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+/* Dark theme */
+[data-theme="dark"] .admin-section {
+  background-color: #21252e;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .admin-header h1,
+[data-theme="dark"] .admin-section h2 {
+  color: #f0f0f0;
+}
+
+[data-theme="dark"] .approval-item {
+  background-color: #1a1d24;
+}
+
+[data-theme="dark"] .approval-info strong {
+  color: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .approval-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

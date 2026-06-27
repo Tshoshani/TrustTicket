@@ -1,0 +1,1026 @@
+{
+  "info": {
+    "name": "TrustTicket API (Assignment 4)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Full API for the TrustTicket full-stack app. Base URL includes /api. Auth simulated via x-user-role and x-user-id headers."
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    }
+  ],
+  "item": [
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "Root / Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            }
+          }
+        },
+        {
+          "name": "DB Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/db-test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "db-test"
+              ]
+            }
+          }
+        },
+        {
+          "name": "ORM Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orm-test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orm-test"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"shay@trustticket.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Me",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get User Reviews",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users/2/reviews",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "2",
+                "reviews"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"email\": \"new@trustticket.com\",\n  \"password\": \"password123\",\n  \"userRole\": \"user\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Shay\",\n  \"lastName\": \"Silversmith\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/99",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "99"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Tickets (filtered)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets?eventType=Concert&status=available",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets"
+              ],
+              "query": [
+                {
+                  "key": "eventType",
+                  "value": "Concert"
+                },
+                {
+                  "key": "status",
+                  "value": "available"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Ticket By Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "101"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventName\": \"My Show\",\n  \"eventType\": \"Concert\",\n  \"eventDate\": \"2026-09-01\",\n  \"venue\": \"Tel Aviv\",\n  \"barcode\": \"NEW12345\",\n  \"originalPrice\": 200,\n  \"salePrice\": 250,\n  \"sellerId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Ticket",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "101"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventName\": \"Omer Adam Live\",\n  \"eventType\": \"Concert\",\n  \"eventDate\": \"2026-07-20\",\n  \"barcode\": \"XYZ123456\",\n  \"salePrice\": 360,\n  \"sellerId\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Verify Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/103/verify",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "103",
+                "verify"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Purchase Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101/purchase",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "101",
+                "purchase"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Redeem Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/101/redeem",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "101",
+                "redeem"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tickets/999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tickets",
+                "999"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transactions"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Transaction By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transactions",
+                "1001"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transactions"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticketId\": 104,\n  \"buyerId\": 3,\n  \"sellerId\": 2,\n  \"totalPrice\": 210\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Transaction",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/1001",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transactions",
+                "1001"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"completed\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Transaction",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions/9999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transactions",
+                "9999"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "2"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings",
+      "item": [
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settings"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Settings",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/settings",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "settings"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"displayName\": \"Shay S\",\n  \"theme\": \"dark\",\n  \"language\": \"en\",\n  \"notifications\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Favorites",
+      "item": [
+        {
+          "name": "Add Favorite",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorites",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": 2,\n  \"ticketId\": 106\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get User Favorites",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/user/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "user",
+                "2"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Ticket Favorited-By",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "admin"
+              },
+              {
+                "key": "x-user-id",
+                "value": "1"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/ticket/101",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "ticket",
+                "101"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Remove Favorite",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/favorites/2/106",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "favorites",
+                "2",
+                "106"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "AI",
+      "item": [
+        {
+          "name": "AI Advice (real ticket)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ai/ticket-advice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "ticket-advice"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticketId\": 109\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "AI Advice (seller, no price)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "x-user-role",
+                "value": "user"
+              },
+              {
+                "key": "x-user-id",
+                "value": "2"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ai/ticket-advice",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ai",
+                "ticket-advice"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventType\": \"Concert\",\n  \"originalPrice\": 300,\n  \"eventDate\": \"2026-09-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
