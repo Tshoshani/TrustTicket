@@ -27,17 +27,11 @@ let io = null;
  * @returns {Server} the Socket.IO server instance
  */
 function initSocket(httpServer) {
-    // Allowed origins for the WebSocket handshake. The deployed frontend URL
-    // comes from CLIENT_URL (set in Render); local dev origins are always allowed.
-    const allowedOrigins = [
-        process.env.CLIENT_URL,
-        "http://localhost:5173",
-        "http://localhost:3000"
-    ].filter(Boolean);
-
+    // Single-service deployment: the client is served from the same origin and
+    // there are no cookies/credentials, so any origin may open the WebSocket.
     io = new Server(httpServer, {
         cors: {
-            origin: allowedOrigins,
+            origin: "*",
             methods: ["GET", "POST"]
         }
     });
