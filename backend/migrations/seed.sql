@@ -80,26 +80,26 @@ VALUES
 INSERT INTO tickets
 (ticket_id, event_name, event_type, event_date, venue, barcode, original_price, sale_price, seller_id, status, verified, buyer_id, create_date, update_date)
 VALUES
-(133, 'Omer Adam New Year Show', 'Concert', '2026-12-30', 'Menora Mivtachim Arena', 'OASOLD133', 380, 360, 2, 'completed', true, 4, '2026-06-01 10:00:00', '2026-06-01 12:00:00'),
-(134, 'Jane Bordeaux Live', 'Concert', '2026-09-02', 'Barby Club, Tel Aviv', 'JBSOLD134', 220, 200, 3, 'completed', true, 5, '2026-06-01 11:00:00', '2026-06-01 13:00:00'),
-(135, 'Coldplay Extra Night', 'Concert', '2026-08-13', 'Park HaYarkon, Tel Aviv', 'CPSOLD135', 590, 480, 4, 'completed', true, 2, '2026-06-02 09:00:00', '2026-06-02 10:00:00'),
-(136, 'Comedy Bar Late Night', 'Standup', '2026-07-19', 'Comedy Bar, Tel Aviv', 'CBSOLD136', 130, 150, 5, 'completed', true, 3, '2026-06-03 09:00:00', '2026-06-03 10:00:00'),
-(137, 'Red Hot Chili Peppers VIP', 'Concert', '2026-07-18', 'Park HaYarkon, Tel Aviv', 'RHSOLD137', 650, 720, 2, 'completed', true, 5, '2026-06-03 14:00:00', '2026-06-03 15:00:00'),
-(138, 'Static & Ben El Encore', 'Concert', '2026-07-31', 'Live Park, Rishon LeZion', 'SBSOLD138', 240, 270, 3, 'completed', true, 4, '2026-06-04 12:00:00', '2026-06-04 13:00:00'),
-(139, 'Tel Aviv Jazz Night', 'Festival', '2026-11-08', 'Charles Bronfman Auditorium', 'JZSOLD139', 220, 240, 4, 'completed', true, 1, '2026-06-05 10:00:00', '2026-06-05 11:00:00'),
-(140, 'Eden Ben Zaken Encore', 'Concert', '2026-08-09', 'Caesarea Amphitheater', 'EBSOLD140', 300, 320, 5, 'completed', true, 2, '2026-06-05 16:00:00', '2026-06-05 17:00:00');
+(133, 'Omer Adam New Year Show', 'Concert', '2026-12-30', 'Menora Mivtachim Arena', 'OASOLD133', 380, 360, 2, 'completed', true, 4, '2026-06-27 10:00:00', '2026-06-27 12:00:00'),
+(134, 'Jane Bordeaux Live', 'Concert', '2026-09-02', 'Barby Club, Tel Aviv', 'JBSOLD134', 220, 200, 3, 'completed', true, 5, '2026-06-25 11:00:00', '2026-06-25 13:00:00'),
+(135, 'Coldplay Extra Night', 'Concert', '2026-08-13', 'Park HaYarkon, Tel Aviv', 'CPSOLD135', 590, 480, 4, 'completed', true, 2, '2026-06-22 09:00:00', '2026-06-22 10:00:00'),
+(136, 'Comedy Bar Late Night', 'Standup', '2026-07-19', 'Comedy Bar, Tel Aviv', 'CBSOLD136', 130, 150, 5, 'completed', true, 3, '2026-06-18 09:00:00', '2026-06-18 10:00:00'),
+(137, 'Red Hot Chili Peppers VIP', 'Concert', '2026-07-18', 'Park HaYarkon, Tel Aviv', 'RHSOLD137', 650, 720, 2, 'completed', true, 5, '2026-06-10 14:00:00', '2026-06-10 15:00:00'),
+(138, 'Static & Ben El Encore', 'Concert', '2026-07-31', 'Live Park, Rishon LeZion', 'SBSOLD138', 240, 270, 3, 'completed', true, 4, '2026-05-28 12:00:00', '2026-05-28 13:00:00'),
+(139, 'Tel Aviv Jazz Night', 'Festival', '2026-11-08', 'Charles Bronfman Auditorium', 'JZSOLD139', 220, 240, 4, 'completed', true, 1, '2026-04-15 10:00:00', '2026-04-15 11:00:00'),
+(140, 'Eden Ben Zaken Encore', 'Concert', '2026-08-09', 'Caesarea Amphitheater', 'EBSOLD140', 300, 320, 5, 'completed', true, 2, '2026-02-20 16:00:00', '2026-02-20 17:00:00');
 
 INSERT INTO transactions
 (transaction_id, ticket_id, buyer_id, seller_id, status, ticket_released, buyer_fee, seller_fee, total_price, create_date, update_date)
 VALUES
-(1004, 133, 4, 2, 'completed', true, 9, 9, 360, '2026-06-01 10:05:00', '2026-06-01 12:00:00'),
-(1005, 134, 5, 3, 'completed', true, 5, 5, 200, '2026-06-01 11:05:00', '2026-06-01 13:00:00'),
-(1006, 135, 2, 4, 'completed', true, 12, 12, 480, '2026-06-02 09:05:00', '2026-06-02 10:00:00'),
-(1007, 136, 3, 5, 'completed', true, 3.75, 3.75, 150, '2026-06-03 09:05:00', '2026-06-03 10:00:00'),
-(1008, 137, 5, 2, 'completed', true, 18, 18, 720, '2026-06-03 14:05:00', '2026-06-03 15:00:00'),
-(1009, 138, 4, 3, 'completed', true, 6.75, 6.75, 270, '2026-06-04 12:05:00', '2026-06-04 13:00:00'),
-(1010, 139, 1, 4, 'completed', true, 6, 6, 240, '2026-06-05 10:05:00', '2026-06-05 11:00:00'),
-(1011, 140, 2, 5, 'completed', true, 8, 8, 320, '2026-06-05 16:05:00', '2026-06-05 17:00:00');
+(1004, 133, 4, 2, 'completed', true, 9, 9, 360, '2026-06-27 10:05:00', '2026-06-27 12:00:00'),
+(1005, 134, 5, 3, 'completed', true, 5, 5, 200, '2026-06-25 11:05:00', '2026-06-25 13:00:00'),
+(1006, 135, 2, 4, 'completed', true, 12, 12, 480, '2026-06-22 09:05:00', '2026-06-22 10:00:00'),
+(1007, 136, 3, 5, 'completed', true, 3.75, 3.75, 150, '2026-06-18 09:05:00', '2026-06-18 10:00:00'),
+(1008, 137, 5, 2, 'completed', true, 18, 18, 720, '2026-06-10 14:05:00', '2026-06-10 15:00:00'),
+(1009, 138, 4, 3, 'completed', true, 6.75, 6.75, 270, '2026-05-28 12:05:00', '2026-05-28 13:00:00'),
+(1010, 139, 1, 4, 'completed', true, 6, 6, 240, '2026-04-15 10:05:00', '2026-04-15 11:00:00'),
+(1011, 140, 2, 5, 'completed', true, 8, 8, 320, '2026-02-20 16:05:00', '2026-02-20 17:00:00');
 
 INSERT INTO favorites
 (user_id, ticket_id)
