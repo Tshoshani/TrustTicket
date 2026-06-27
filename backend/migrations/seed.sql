@@ -59,6 +59,23 @@ VALUES
 (119, 'Comedy Bar - Open Mic Special', 'Standup', '2026-07-14', 'Comedy Bar, Tel Aviv', 'CMDY0714', 80, 95, 3, 'available', true, NULL, '2026-05-26 10:00:00', '2026-05-26 10:00:00'),
 (120, 'InDNegev Desert Festival', 'Festival', '2026-10-15', 'Mitzpe Gvulot, Negev', 'IND10152', 420, 470, 4, 'pending', false, NULL, '2026-05-27 11:00:00', '2026-05-27 11:00:00');
 
+-- Extra catalog so there is always plenty available to buy in a demo.
+INSERT INTO tickets
+(ticket_id, event_name, event_type, event_date, venue, barcode, original_price, sale_price, seller_id, status, verified, buyer_id, create_date, update_date)
+VALUES
+(121, 'Bruno Mars Live', 'Concert', '2026-08-22', 'Park HaYarkon, Tel Aviv', 'BM082226', 620, 780, 3, 'available', true, NULL, '2026-05-28 09:00:00', '2026-05-28 09:00:00'),
+(122, 'Hapoel Jerusalem vs Maccabi TLV', 'Sports', '2026-09-14', 'Pais Arena, Jerusalem', 'HJ091426', 160, 190, 4, 'available', true, NULL, '2026-05-28 10:00:00', '2026-05-28 10:00:00'),
+(123, 'Rita Live in Concert', 'Concert', '2026-07-29', 'Caesarea Amphitheater', 'RITA0729', 300, 330, 5, 'available', true, NULL, '2026-05-28 11:00:00', '2026-05-28 11:00:00'),
+(124, 'Tel Aviv Pride Party', 'Party', '2026-06-12', 'Gordon Beach, Tel Aviv', 'PRIDE612', 180, 220, 3, 'available', true, NULL, '2026-05-28 12:00:00', '2026-05-28 12:00:00'),
+(125, 'Hadag Nahash Live', 'Concert', '2026-09-26', 'Zappa Amphi, Shuni', 'HDN09261', 210, 240, 4, 'available', true, NULL, '2026-05-29 09:00:00', '2026-05-29 09:00:00'),
+(126, 'Comedy Central Live TLV', 'Standup', '2026-08-18', 'Zappa, Tel Aviv', 'CCL08181', 110, 125, 5, 'available', true, NULL, '2026-05-29 10:00:00', '2026-05-29 10:00:00'),
+(127, 'Cameri Theater - Les Miserables', 'Theater', '2026-10-09', 'Cameri Theater, Tel Aviv', 'LESM1009', 240, 270, 3, 'available', true, NULL, '2026-05-29 11:00:00', '2026-05-29 11:00:00'),
+(128, 'Maccabi Haifa vs Beitar Jerusalem', 'Sports', '2026-09-21', 'Sammy Ofer Stadium, Haifa', 'MHB09211', 140, 165, 4, 'available', true, NULL, '2026-05-29 12:00:00', '2026-05-29 12:00:00'),
+(129, 'Summer Beats Rooftop Party', 'Party', '2026-07-11', 'Herzliya Marina Rooftop', 'SBRP0711', 160, 200, 5, 'available', true, NULL, '2026-05-30 09:00:00', '2026-05-30 09:00:00'),
+(130, 'Ivri Lider Live', 'Concert', '2026-08-27', 'Live Park, Rishon LeZion', 'IVRI0827', 250, 280, 3, 'available', true, NULL, '2026-05-30 10:00:00', '2026-05-30 10:00:00'),
+(131, 'Tamuz Electronic Festival', 'Festival', '2026-09-12', 'Ganei Yehoshua, Tel Aviv', 'TAMUZ912', 360, 400, 4, 'pending', false, NULL, '2026-05-30 11:00:00', '2026-05-30 11:00:00'),
+(132, 'Idan Raichel Project', 'Concert', '2026-10-18', 'Charles Bronfman Auditorium', 'IRP10181', 280, 300, 5, 'pending', false, NULL, '2026-05-30 12:00:00', '2026-05-30 12:00:00');
+
 INSERT INTO favorites
 (user_id, ticket_id)
 VALUES
