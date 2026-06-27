@@ -5,9 +5,11 @@
 // events they care about.
 import { io } from 'socket.io-client';
 
-// Socket.IO lives on the API host (without the trailing /api path).
-const SOCKET_URL =
-  process.env.REACT_APP_SOCKET_URL || 'http://localhost:3000';
+// Socket.IO host. In production the frontend is served by the same Express
+// server, so we connect to the SAME origin (pass undefined -> socket.io uses
+// window.location). In local dev the backend is on a different port, so
+// .env.development sets REACT_APP_SOCKET_URL=http://localhost:3000.
+const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || undefined;
 
 // autoConnect is left on; the LiveUpdates page can also call connect()/disconnect()
 // explicitly. A single instance is reused across the app.
