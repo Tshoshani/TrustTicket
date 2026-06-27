@@ -32,7 +32,7 @@ function Dashboard({ user }) {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
-  const [scope, setScope] = useState('all'); // 'all' | 'mine' (my listings) | 'purchased'
+  const [scope, setScope] = useState('market'); // market | pending | mine | purchased | history
   const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [profileUserId, setProfileUserId] = useState(null); // seller profile modal
@@ -273,13 +273,48 @@ function Dashboard({ user }) {
 
   const eventTypes = [...new Set(tickets.map((t) => t.eventType))];
 
-  // Ownership scope: All tickets, only the ones I'm selling, or only the ones I bought.
-  const scopedTickets = tickets.filter((t) => {
-    if (scope === 'mine') return t.sellerId === user?.id;
-    if (scope === 'purchased') return t.buyerId === user?.id;
-    return true;
-  });
+  const isStaff = user?.role === 'admin' || user?.role === 'manager';
+  const isMine = (t) => t.sellerId === user?.id;
+  const isMyBuy = (t) => t.buyerId === user?.id;
+
+  // Each tab shows the tickets relevant to a stage of the ticket lifecycle:
+  //   market    -> available to buy
+  //   pending   -> awaiting admin approval (staff see all, sellers see their own)
+  //   mine      -> tickets I'm selling
+  //   purchased -> tickets I bought that I haven't used yet
+  //   history   -> completed/used tickets I was part of (bought or sold)
+  const scopeFilter = (t) => {
+    switch (scope) {
+      case 'pending':   return t.status === 'pending' && (isStaff || isMine(t));
+      case 'mine':      return isMine(t);
+      case 'purchased': return isMyBuy(t) && t.status === 'reserved';
+      case 'history':   return t.status === 'completed' && (isMyBuy(t) || isMine(t));
+      case 'market':
+      default:          return t.status === 'available';
+    }
+  };
+  const scopedTickets = tickets.filter(scopeFilter);
   const filteredTickets = applyFilters(scopedTickets);
+
+  // Counts shown on each tab.
+  const counts = {
+    market: tickets.filter((t) => t.status === 'available').length,
+    pending: tickets.filter((t) => t.status === 'pending' && (isStaff || isMine(t))).length,
+    mine: tickets.filter(isMine).length,
+    purchased: tickets.filter((t) => isMyBuy(t) && t.status === 'reserved').length,
+    history: tickets.filter((t) => t.status === 'completed' && (isMyBuy(t) || isMine(t))).length,
+  };
+
+  // Friendly empty-state message per tab.
+  const emptyMessage = {
+    market: 'No tickets are available to buy right now.',
+    pending: isStaff
+      ? 'No tickets are waiting for approval.'
+      : 'You have no listings waiting for approval.',
+    mine: "You haven't listed any tickets yet.",
+    purchased: "You haven't bought any tickets to use yet.",
+    history: 'No completed tickets yet.',
+  }[scope];
 
   // Stats (fall back to computed values if the dashboard endpoint was empty)
   const availableCount = tickets.filter((t) => t.status === 'available').length;
@@ -319,22 +354,34 @@ function Dashboard({ user }) {
       <div className="dashboard-toolbar">
         <div className="scope-tabs">
           <button
-            className={`toggle-btn ${scope === 'all' ? 'active' : ''}`}
-            onClick={() => setScope('all')}
+            className={`toggle-btn ${scope === 'market' ? 'active' : ''}`}
+            onClick={() => setScope('market')}
           >
-            All Tickets
+            Marketplace ({counts.market})
+          </button>
+          <button
+            className={`toggle-btn ${scope === 'pending' ? 'active' : ''}`}
+            onClick={() => setScope('pending')}
+          >
+            Pending Approval ({counts.pending})
           </button>
           <button
             className={`toggle-btn ${scope === 'mine' ? 'active' : ''}`}
             onClick={() => setScope('mine')}
           >
-            My Listings ({myListings})
+            My Listings ({counts.mine})
           </button>
           <button
             className={`toggle-btn ${scope === 'purchased' ? 'active' : ''}`}
             onClick={() => setScope('purchased')}
           >
-            My Purchases ({myPurchases})
+            My Purchases ({counts.purchased})
+          </button>
+          <button
+            className={`toggle-btn ${scope === 'history' ? 'active' : ''}`}
+            onClick={() => setScope('history')}
+          >
+            History ({counts.history})
           </button>
         </div>
         <button className="btn-list-ticket" onClick={openForm}>
@@ -427,7 +474,7 @@ function Dashboard({ user }) {
 
         {filteredTickets.length === 0 ? (
           <div className="empty-state">
-            <p>No tickets found. Try different filters or list a ticket of your own.</p>
+            <p>{emptyMessage}</p>
           </div>
         ) : viewMode === 'cards' ? (
           <div className="cards-grid">
