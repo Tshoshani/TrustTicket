@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Card from '../components/Card';
 import Table from '../components/Table';
 import UserProfileModal from '../components/UserProfileModal';
-import { ticketsAPI, dashboardAPI, usersAPI, aiAPI } from '../services/api';
+import { ticketsAPI, usersAPI, aiAPI } from '../services/api';
 import '../styles/Dashboard.css';
 
 // Event categories offered when listing a ticket.
@@ -21,7 +21,6 @@ const emptyForm = {
 function Dashboard({ user }) {
   const [tickets, setTickets] = useState([]);
   const [sellersById, setSellersById] = useState({});
-  const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
@@ -57,14 +56,6 @@ function Dashboard({ user }) {
     try {
       setLoading(true);
       setError('');
-
-      // Dashboard summary (best-effort - don't fail the whole page if it errors)
-      try {
-        const dashboardRes = await dashboardAPI.getByUserId(user?.id || 1);
-        setDashboardData(dashboardRes.data);
-      } catch (e) {
-        // ignore - stats will fall back to computed values
-      }
 
       const ticketsRes = await ticketsAPI.getAll();
       const list = ticketsRes.data || [];
@@ -305,15 +296,15 @@ function Dashboard({ user }) {
         </div>
         <div className="stat-card">
           <h3>Your Listings</h3>
-          <p className="stat-number">{dashboardData?.activeListings?.length ?? myListings}</p>
+          <p className="stat-number">{myListings}</p>
         </div>
         <div className="stat-card">
           <h3>Your Purchases</h3>
-          <p className="stat-number">{dashboardData?.purchaseHistory?.length ?? myPurchases}</p>
+          <p className="stat-number">{myPurchases}</p>
         </div>
         <div className="stat-card">
           <h3>Your Sales</h3>
-          <p className="stat-number">{dashboardData?.salesHistory?.length ?? mySales}</p>
+          <p className="stat-number">{mySales}</p>
         </div>
       </div>
 
