@@ -288,7 +288,7 @@ function Dashboard({ user }) {
       case 'pending':   return t.status === 'pending' && (isStaff || isMine(t));
       case 'mine':      return isMine(t);
       case 'purchased': return isMyBuy(t) && t.status === 'reserved';
-      case 'history':   return t.status === 'completed' && (isMyBuy(t) || isMine(t));
+      case 'history':   return t.status === 'completed' && (isStaff || isMyBuy(t) || isMine(t));
       case 'market':
       default:          return t.status === 'available';
     }
@@ -302,7 +302,7 @@ function Dashboard({ user }) {
     pending: tickets.filter((t) => t.status === 'pending' && (isStaff || isMine(t))).length,
     mine: tickets.filter(isMine).length,
     purchased: tickets.filter((t) => isMyBuy(t) && t.status === 'reserved').length,
-    history: tickets.filter((t) => t.status === 'completed' && (isMyBuy(t) || isMine(t))).length,
+    history: tickets.filter((t) => t.status === 'completed' && (isStaff || isMyBuy(t) || isMine(t))).length,
   };
 
   // Friendly empty-state message per tab.
