@@ -7,7 +7,8 @@ node_modules
 /coverage
 
 # Production
-/build
+# NOTE: /build is intentionally committed in this project — Express serves the
+# pre-built SPA in the single-service Render deployment (see DEPLOYMENT.md).
 /dist
 
 # Misc

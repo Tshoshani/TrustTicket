@@ -6,6 +6,7 @@
 const { sequelize, User, Ticket, Transaction, Favorite } = require('../models');
 const express = require('express');
 const http = require('http'); // Needed to share one server between Express and Socket.IO
+const path = require('path'); // Used to locate the compiled React build on disk
 const cors = require('cors'); // Enables cross-origin requests from the React frontend (different port)
 const { initSocket } = require('./socket'); // Real-time layer (WebSockets via Socket.IO)
 const app = express(); // Create the Express application instance
@@ -64,8 +65,9 @@ app.use('/api/settings', settingsRoutes);    // Per-user settings
 app.use('/api/favorites', favoriteRoutes);  // User favorites (junction table) endpoints
 app.use('/api/ai', aiRoutes);                // AI Ticket Advisor (pricing & trust)
 
-// Root route - simple health-check to verify the server is running
-app.get('/', (req, res) => {
+// API health-check to verify the server is running.
+// (The root path "/" now serves the React app — see the static handler below.)
+app.get('/api/health', (req, res) => {
     res.json({
         success: true,
         data: { message: "Welcome to Trust Ticket API" },
@@ -141,7 +143,19 @@ app.get('/api/orm-test', async (req, res) => {
     }
 });
 
-// Catch-all route for unknown endpoints
+// ---- Serve the compiled React frontend (single-service deployment) ----
+// In production the built SPA lives in frontend/build and is served by Express
+// from the SAME origin as the API. The API routes above always take precedence;
+// any other GET request falls through to index.html so client-side routing
+// (e.g. refreshing /dashboard) works without a 404. Parcel/CRA is only used
+// locally to produce this build — never on the server.
+const clientBuildPath = path.join(__dirname, '..', '..', 'frontend', 'build');
+app.use(express.static(clientBuildPath));
+app.get(/^\/(?!api\/).*/, (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
+
+// Catch-all route for unknown endpoints (API 404s and non-GET unknown routes).
 app.use((req, res) => {
     res.status(404).json({
         success: false,

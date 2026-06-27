@@ -18,9 +18,11 @@ frontend/.env
 # Persisted runtime settings (created at runtime)
 backend/data/
 
-# React build output
-build/
-frontend/build/
+# React build output.
+# NOTE: frontend/build is intentionally NOT ignored — in this single-service
+# deployment Express serves the pre-built SPA, so the compiled build is committed
+# to git (as demonstrated in the lecture's "commit the dist" step).
+backend/build/
 
 # Logs
 npm-debug.log*
