@@ -3,7 +3,15 @@
 העבודה דורשת 6 צילומי מסך. שמרו אותם ב‑`frontend/Screenshots/` (או תיקיית `submission/screenshots/`).
 שם מוצע לכל קובץ מופיע בכותרת. צלמו כך שרואים גם את הכתובת/החלון וגם את התוצאה.
 
-## הכנה (פעם אחת)
+> 💡 **אפשר לצלם מהאתר הפרוס** (עדיף — מוכיח שזה deployed):
+> **https://trustticket-1tn3.onrender.com** (ה-API תחת אותו origin: `/api/...`).
+> כל מקום שכתוב `http://localhost:5173` → החליפו בכתובת הזו, ו-`http://localhost:3000/api` → `https://trustticket-1tn3.onrender.com/api`.
+
+## 📍 סטטוס נוכחי
+- ✅ **כבר יש לכם:** #1 (DB connected) ו-#2 (CRUD) ב-`backend/Screenshots/`, ועמודי UI ב-`frontend/Screenshots/`.
+- ❌ **עדיין צריך לצלם:** **#3 ORM relationships · #4 WebSocket · #5 AI · #6 DB tables**.
+
+## הכנה (פעם אחת — רק אם מצלמים מקומית)
 ```bash
 # 1. צרו את ה-DB מתוך ה-migration
 mysql -u root -p < backend/migrations/schema.sql
@@ -13,6 +21,7 @@ cd backend && npm start          # http://localhost:3000
 cd frontend && npm start         # http://localhost:5173
 ```
 התחברו עם: `tomer@trustticket.com` / `password123` (admin).
+(אם מצלמים מהאתר הפרוס — לא צריך את ההכנה הזו, פשוט פתחו את כתובת ה-Render והתחברו.)
 
 ---
 
@@ -54,14 +63,32 @@ SELECT * FROM favorites;   -- מראה את ה-junction table עם נתונים
 צלמו את רשימת הטבלאות (users, admins, tickets, transactions, favorites, settings, reviews).
 *חלופה:* צילום של `backend/migrations/schema.sql` פתוח בעורך.
 
+## 7️⃣ (בונוס) `07_admin_dashboard.png` — דשבורד אנליטיקות לאדמין
+**מה לצלם:** התחברו כאדמין → עמוד **Admin** → טאב **Sales Dashboard** או **Profit Analytics**.
+צלמו את כרטיסי הסיכום (Platform Profit, Sales Volume...) + גרפי העמודות + פילטר טווח הזמן.
+לא חובה למטלה, אבל מרשים ומראה עומק — שווה לכלול.
+
 ---
 
 ## ✅ צ'קליסט הגשה סופי
-- [ ] 6 צילומי המסך למעלה
-- [ ] סרטון דמו (הקלטת מסך שמראה: התחברות → CRUD → live בין טאבים → AI)
+- [ ] 6 צילומי המסך למעלה (חסרים: #3 ORM, #4 WebSocket, #5 AI, #6 DB tables)
+- [ ] סרטון דמו (הקלטת מסך שמראה: התחברות → CRUD → live בין טאבים → AI → הגדרות → התנתקות)
 - [ ] ZIP **בלי** `node_modules`, בלי `.env` אמיתי, בלי מפתחות אמיתיים
-- [ ] לוודא ש-`.env.example` כלול (כן, נמצא ב-`backend/.env.example`)
-- [ ] Postman collection כלול (`backend/docs/TrustTicket.postman_collection.json`)
-- [ ] README.md כלול
+- [ ] `.env.example` כלול · Postman כלול · README.md כלול
+
+## 📦 יצירת ה-ZIP (נקי, בלי קבצים אסורים)
+הדרך הבטוחה ביותר — `git archive` אורז **רק קבצים שעוקבים אחריהם ב-git**, ולכן
+**אוטומטית מדלג** על `node_modules`, `.env`, ו-`.claude` (כולם git-ignored):
+```bash
+# קודם — ודאו שצילומי המסך כבר נוספו ל-git (אחרת לא ייכנסו ל-zip):
+git add frontend/Screenshots backend/Screenshots
+git commit -m "Add submission screenshots"
+
+# ואז צרו את ה-ZIP מהקבצים העוקבים:
+git archive --format=zip --output=TrustTicket_Assignment4.zip HEAD
+```
+את הסרטון (קובץ וידאו גדול, לא ב-git) **הוסיפו ידנית** ל-ZIP אחרי היצירה, או הגישו בנפרד לפי הנחיות הקורס.
+
+> ⚠️ אם אתם אורזים ידנית במקום `git archive` — **מחקו/דלגו על `backend/.env`** (מכיל את סיסמת ה-RDS והמפתח האמיתי של Gemini) ועל `node_modules/`.
 
 > הקובץ הזה הוא עזר בלבד ואינו חלק מקוד המקור — אפשר למחוק אותו לפני יצירת ה-ZIP.
