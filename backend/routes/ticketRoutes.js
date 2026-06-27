@@ -35,7 +35,9 @@ router.post('/:id/redeem', authorize(['user', 'admin', 'manager']), ticketContro
 // PUT /tickets/:id - Update an existing ticket's info (seller or admin)
 router.put('/:id', authorize(['user', 'admin']), ticketController.updateTicket);
 
-// DELETE /tickets/:id - Remove a ticket listing permanently (admin only)
-router.delete('/:id', authorize(['admin']), ticketController.deleteTicket);
+// DELETE /tickets/:id - Remove a ticket listing permanently.
+// Allowed for admin/manager (any ticket) OR a 'user' deleting their own listing
+// (ownership is enforced inside the controller via the x-user-id header).
+router.delete('/:id', authorize(['user', 'admin', 'manager']), ticketController.deleteTicket);
 
 module.exports = router;

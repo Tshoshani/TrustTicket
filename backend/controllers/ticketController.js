@@ -408,6 +408,25 @@ const ticketController = {
                 });
             }
 
+            // Ownership check: a regular 'user' may delete only their own listing;
+            // admin/manager may delete any ticket. Identity comes from the
+            // simulated-auth headers set by the frontend.
+            const role = req.headers["x-user-role"];
+            const requesterId = parseInt(req.headers["x-user-id"], 10);
+            const isPrivileged = role === "admin" || role === "manager";
+
+            if (!isPrivileged && ticket.sellerId !== requesterId) {
+                return res.status(403).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "FORBIDDEN",
+                        message: "You can only delete your own ticket listings.",
+                        details: {}
+                    }
+                });
+            }
+
             await ticket.destroy();
 
             return res.status(200).json({

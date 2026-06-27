@@ -113,6 +113,33 @@
   cursor: not-allowed;
 }
 
+.login-switch {
+  text-align: center;
+  font-size: 13px;
+  color: #5B5870;
+}
+
+.login-switch p {
+  margin: 0;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #6D28D9;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family: inherit;
+}
+
+.link-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .login-info {
   background-color: #F5F3FF;
   border: 1px solid #E7E3F0;

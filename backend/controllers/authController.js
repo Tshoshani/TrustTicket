@@ -85,6 +85,101 @@ const authController = {
     },
 
     /**
+     * POST /api/auth/register
+     * Public self-registration. Creates a new "user" role account and returns
+     * the same { user, token } shape as login, so the frontend can log the
+     * new user straight in.
+     *
+     * Body: { firstName, lastName, email, password }
+     */
+    register: async (req, res) => {
+        try {
+            const { firstName, lastName, email, password } = req.body || {};
+
+            // Field-level validation with a clear "missing fields" list.
+            const missing = [];
+            if (!firstName || !String(firstName).trim()) missing.push("firstName");
+            if (!lastName || !String(lastName).trim()) missing.push("lastName");
+            if (!email || !String(email).trim()) missing.push("email");
+            if (!password) missing.push("password");
+
+            if (missing.length) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: `Missing required field(s): ${missing.join(", ")}`,
+                        details: { missing }
+                    }
+                });
+            }
+
+            // Basic email + password rules (mirrors the frontend validation).
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: "Please provide a valid email address.",
+                        details: { field: "email" }
+                    }
+                });
+            }
+
+            if (String(password).length < 6) {
+                return res.status(400).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "VALIDATION_ERROR",
+                        message: "Password must be at least 6 characters.",
+                        details: { field: "password" }
+                    }
+                });
+            }
+
+            const newUser = await User.create({
+                firstName: String(firstName).trim(),
+                lastName: String(lastName).trim(),
+                email: String(email).trim().toLowerCase(),
+                password,
+                userRole: "user",
+                trustRating: 0,
+                ratingCount: 0,
+                successfulDeals: 0,
+                verifiedSeller: false,
+                createDate: new Date(),
+                updateDate: new Date()
+            });
+
+            return res.status(201).json({
+                success: true,
+                data: {
+                    user: toPublicUser(newUser),
+                    token: `demo-token-user-${newUser.userId}`
+                },
+                error: null
+            });
+        } catch (err) {
+            if (err.name === "SequelizeUniqueConstraintError") {
+                return res.status(409).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "DUPLICATE_EMAIL",
+                        message: "A user with this email already exists.",
+                        details: { field: "email" }
+                    }
+                });
+            }
+            return handleServerError(res, "REGISTER_FAILED", "Failed to register", err);
+        }
+    },
+
+    /**
      * POST /api/auth/logout
      * Keeps simple simulated logout.
      */

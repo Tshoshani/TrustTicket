@@ -139,6 +139,25 @@ function Dashboard({ user }) {
       }
     }, 'Sale completed.');
 
+  // Permanently remove a listing (DELETE DB call). Allowed for the ticket's own
+  // seller or for admin/manager. Closes the details modal on success.
+  const handleDelete = (ticket) => {
+    if (!window.confirm(`Delete the listing "${ticket.eventName}"? This cannot be undone.`)) {
+      return;
+    }
+    setSelectedTicket(null);
+    return runAction(
+      () => ticketsAPI.delete(ticket.ticketId),
+      'Ticket listing deleted.'
+    );
+  };
+
+  // Whether the current user is allowed to delete a given ticket.
+  const canDelete = (ticket) =>
+    user?.role === 'admin' ||
+    user?.role === 'manager' ||
+    ticket.sellerId === user?.id;
+
   // --- Ticket upload form -------------------------------------------------
 
   const handleFormChange = (e) => {
@@ -530,6 +549,14 @@ function Dashboard({ user }) {
               >
                 View seller profile & reviews
               </button>
+              {canDelete(selectedTicket) && (
+                <button
+                  className="btn-delete-ticket"
+                  onClick={() => handleDelete(selectedTicket)}
+                >
+                  🗑️ Delete listing
+                </button>
+              )}
             </div>
           </div>
         </div>

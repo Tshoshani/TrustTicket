@@ -48,6 +48,8 @@ const apiCall = async (endpoint, method = 'GET', body = null) => {
 export const authAPI = {
   // POST /auth/login - returns { success, data: { user, token }, error }
   login: (email, password) => apiCall('/auth/login', 'POST', { email, password }),
+  // POST /auth/register - self sign-up; returns { success, data: { user, token }, error }
+  register: (details) => apiCall('/auth/register', 'POST', details),
   logout: () => apiCall('/auth/logout', 'POST'),
 };
 

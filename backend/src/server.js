@@ -24,14 +24,27 @@ const settingsRoutes = require('../routes/settingsRoutes');
 const favoriteRoutes = require('../routes/favoriteRoutes');
 const aiRoutes = require('../routes/aiRoutes');
 
-// Server configuration - the port the API will listen on
-const PORT = 3000;
+// Server configuration - the port the API will listen on.
+// In production (Render) the platform injects PORT via the environment; locally we fall back to 3000.
+const PORT = process.env.PORT || 3000;
+
+// Allowed CORS origins. The deployed frontend URL is provided via CLIENT_URL
+// (set in Render), and the common local dev origins are always allowed.
+const allowedOrigins = [
+    process.env.CLIENT_URL,        // e.g. https://trustticket-frontend.onrender.com
+    "http://localhost:5173",       // Vite/local dev
+    "http://localhost:3000"        // CRA local dev
+].filter(Boolean);
 
 // Global Middleware
-// CORS lets the frontend (http://localhost:5173) call this API from the browser.
+// CORS lets the frontend call this API from the browser.
 // Allow the custom headers the frontend sends for the simulated auth.
 app.use(cors({
-    origin: "http://localhost:5173", // Allow requests from the frontend dev server
+    origin: (origin, callback) => {
+        // Allow non-browser tools (no Origin header) and any whitelisted origin.
+        if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
     allowedHeaders: ['Content-Type', 'x-user-role', 'x-user-id']
 }));
 // express.json() parses incoming JSON request bodies so we can access req.body
