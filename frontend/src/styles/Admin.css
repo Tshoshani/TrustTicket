@@ -124,3 +124,109 @@
     align-items: flex-start;
   }
 }
+
+/* ---- Platform analytics ---- */
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin: 16px 0 24px;
+}
+
+.admin-stat-card {
+  background: #faf9ff;
+  border: 1px solid #ece7fb;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+
+.admin-stat-card.highlight {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border-color: #6d28d9;
+}
+
+.admin-stat-card h3 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.admin-stat-card.highlight h3 { color: #ece7fb; }
+
+.admin-stat-number {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 800;
+  color: #1e1b2e;
+}
+
+.admin-stat-card.highlight .admin-stat-number { color: #fff; }
+
+.admin-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.chart-block h3 {
+  font-size: 14px;
+  margin: 0 0 12px;
+  color: #1e1b2e;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 44px 1fr 56px;
+  align-items: center;
+  gap: 8px;
+}
+
+.bar-label {
+  font-size: 12px;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-track {
+  background: #ece7fb;
+  border-radius: 6px;
+  height: 16px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #7c3aed, #a855f7);
+  border-radius: 6px;
+  min-width: 2px;
+  transition: width 0.3s;
+}
+
+.bar-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e1b2e;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Dark theme */
+[data-theme="dark"] .admin-stat-card {
+  background: #2a2f3a;
+  border-color: #3a4150;
+}
+[data-theme="dark"] .admin-stat-number,
+[data-theme="dark"] .chart-block h3,
+[data-theme="dark"] .bar-value { color: #f0f0f0; }
+[data-theme="dark"] .bar-track { background: #3a4150; }
+[data-theme="dark"] .bar-label { color: #9aa3b2; }
