@@ -32,6 +32,7 @@ function Dashboard({ user }) {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
+  const [scope, setScope] = useState('all'); // 'all' | 'mine' (my listings) | 'purchased'
   const [viewMode, setViewMode] = useState('cards'); // 'cards' or 'table'
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [profileUserId, setProfileUserId] = useState(null); // seller profile modal
@@ -271,7 +272,14 @@ function Dashboard({ user }) {
   }
 
   const eventTypes = [...new Set(tickets.map((t) => t.eventType))];
-  const filteredTickets = applyFilters(tickets);
+
+  // Ownership scope: All tickets, only the ones I'm selling, or only the ones I bought.
+  const scopedTickets = tickets.filter((t) => {
+    if (scope === 'mine') return t.sellerId === user?.id;
+    if (scope === 'purchased') return t.buyerId === user?.id;
+    return true;
+  });
+  const filteredTickets = applyFilters(scopedTickets);
 
   // Stats (fall back to computed values if the dashboard endpoint was empty)
   const availableCount = tickets.filter((t) => t.status === 'available').length;
@@ -309,6 +317,26 @@ function Dashboard({ user }) {
       </div>
 
       <div className="dashboard-toolbar">
+        <div className="scope-tabs">
+          <button
+            className={`toggle-btn ${scope === 'all' ? 'active' : ''}`}
+            onClick={() => setScope('all')}
+          >
+            All Tickets
+          </button>
+          <button
+            className={`toggle-btn ${scope === 'mine' ? 'active' : ''}`}
+            onClick={() => setScope('mine')}
+          >
+            My Listings ({myListings})
+          </button>
+          <button
+            className={`toggle-btn ${scope === 'purchased' ? 'active' : ''}`}
+            onClick={() => setScope('purchased')}
+          >
+            My Purchases ({myPurchases})
+          </button>
+        </div>
         <button className="btn-list-ticket" onClick={openForm}>
           + List a Ticket
         </button>
