@@ -43,6 +43,12 @@ function Dashboard({ user }) {
   const [formError, setFormError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  // Ticket edit modal (re-uses the same form shape as the upload modal)
+  const [editTicketId, setEditTicketId] = useState(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editError, setEditError] = useState('');
+  const [editSubmitting, setEditSubmitting] = useState(false);
+
   // AI price recommendation (inside the "List a Ticket" form)
   const [aiSuggestion, setAiSuggestion] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
@@ -149,6 +155,70 @@ function Dashboard({ user }) {
     user?.role === 'admin' ||
     user?.role === 'manager' ||
     ticket.sellerId === user?.id;
+
+  // --- Ticket edit --------------------------------------------------------
+
+  // Open the edit modal pre-filled with the ticket's current values. The
+  // date input needs a plain YYYY-MM-DD value.
+  const handleEdit = (ticket) => {
+    setEditError('');
+    setEditTicketId(ticket.ticketId);
+    setEditForm({
+      eventName: ticket.eventName || '',
+      eventType: ticket.eventType || 'Concert',
+      eventDate: ticket.eventDate ? String(ticket.eventDate).slice(0, 10) : '',
+      venue: ticket.venue || '',
+      originalPrice: ticket.originalPrice != null ? String(ticket.originalPrice) : '',
+      salePrice: ticket.salePrice != null ? String(ticket.salePrice) : '',
+      barcode: ticket.barcode || '',
+    });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+    setEditError('');
+  };
+
+  const closeEdit = () => {
+    setEditTicketId(null);
+    setEditError('');
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setEditError('');
+
+    if (!editForm.eventName.trim() || !editForm.eventType || !editForm.eventDate || !editForm.barcode.trim() || !editForm.salePrice) {
+      setEditError('Please fill in event name, type, date, barcode and sale price.');
+      return;
+    }
+    if (Number(editForm.salePrice) <= 0) {
+      setEditError('Sale price must be greater than 0.');
+      return;
+    }
+
+    setEditSubmitting(true);
+    try {
+      await ticketsAPI.update(editTicketId, {
+        eventName: editForm.eventName.trim(),
+        eventType: editForm.eventType,
+        eventDate: editForm.eventDate,
+        venue: editForm.venue.trim() || null,
+        originalPrice: editForm.originalPrice ? Number(editForm.originalPrice) : null,
+        salePrice: Number(editForm.salePrice),
+        barcode: editForm.barcode.trim(),
+        sellerId: user?.id,
+      });
+      setEditTicketId(null);
+      setNotice('Ticket updated — it is now pending re-verification.');
+      await loadDashboardData();
+    } catch (err) {
+      setEditError(err.message || 'Failed to update ticket.');
+    } finally {
+      setEditSubmitting(false);
+    }
+  };
 
   // --- Ticket upload form -------------------------------------------------
 
@@ -488,6 +558,7 @@ function Dashboard({ user }) {
                 onVerify={handleVerify}
                 onBuy={handleBuy}
                 onRedeem={handleRedeem}
+                onEdit={scope === 'mine' ? handleEdit : undefined}
                 onViewSeller={(id) => setProfileUserId(id)}
               />
             ))}
@@ -576,6 +647,63 @@ function Dashboard({ user }) {
                   {submitting ? 'Uploading...' : 'Upload Ticket'}
                 </button>
                 <button type="button" className="btn-reset" onClick={closeForm} disabled={submitting}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Ticket edit modal */}
+      {editTicketId && (
+        <div className="modal-overlay" onClick={closeEdit}>
+          <div className="modal-content form-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeEdit}>✕</button>
+            <h2>Edit Ticket</h2>
+            <p className="form-modal-sub form-warning">
+              ⚠️ Editing this ticket will send it back for AI/admin verification.
+              It will be hidden from the marketplace until it is approved again.
+            </p>
+            <form onSubmit={handleEditSubmit} className="ticket-form">
+              <div className="form-group form-full">
+                <label htmlFor="edit-eventName">Event Name *</label>
+                <input id="edit-eventName" name="eventName" value={editForm.eventName} onChange={handleEditChange} placeholder="e.g. Omer Adam Live" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-eventType">Event Type *</label>
+                <select id="edit-eventType" name="eventType" value={editForm.eventType} onChange={handleEditChange}>
+                  {EVENT_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-eventDate">Event Date *</label>
+                <input id="edit-eventDate" name="eventDate" type="date" value={editForm.eventDate} onChange={handleEditChange} />
+              </div>
+              <div className="form-group form-full">
+                <label htmlFor="edit-venue">Venue</label>
+                <input id="edit-venue" name="venue" value={editForm.venue} onChange={handleEditChange} placeholder="e.g. Bloomfield Stadium" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-originalPrice">Original Price (₪)</label>
+                <input id="edit-originalPrice" name="originalPrice" type="number" min="0" value={editForm.originalPrice} onChange={handleEditChange} placeholder="Optional" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="edit-barcode">Barcode *</label>
+                <input id="edit-barcode" name="barcode" value={editForm.barcode} onChange={handleEditChange} placeholder="Ticket barcode string" />
+              </div>
+              <div className="form-group form-full">
+                <label htmlFor="edit-salePrice">Sale Price (₪) *</label>
+                <input id="edit-salePrice" name="salePrice" type="number" min="0" value={editForm.salePrice} onChange={handleEditChange} placeholder="e.g. 250" />
+              </div>
+
+              {editError && <div className="error-message form-full">{editError}</div>}
+
+              <div className="form-actions form-full">
+                <button type="submit" className="btn-save" disabled={editSubmitting}>
+                  {editSubmitting ? 'Saving...' : 'Save Changes'}
+                </button>
+                <button type="button" className="btn-reset" onClick={closeEdit} disabled={editSubmitting}>
                   Cancel
                 </button>
               </div>

@@ -28,7 +28,12 @@ function LiveUpdates({ user }) {
 
   useEffect(() => {
     // Connection lifecycle (built-in events).
-    const onConnect = () => setConnected(true);
+    const onConnect = () => {
+      setConnected(true);
+      // On (re)connect, pull the current online count right away so the counter
+      // is correct immediately instead of waiting for the next join/leave.
+      socket.emit('getOnlineCount');
+    };
     const onDisconnect = () => setConnected(false);
 
     const onWelcome = (data) => {
@@ -67,8 +72,14 @@ function LiveUpdates({ user }) {
     socket.on('ticketPurchased', onTicketPurchased);
     socket.on('announcement', onAnnouncement);
 
-    // Make sure we are connected when the page mounts.
-    if (!socket.connected) socket.connect();
+    // Make sure we are connected when the page mounts. If the singleton socket is
+    // already connected (autoConnect), "connect" won't fire again, so ask for the
+    // current online count now; otherwise onConnect will request it on connect.
+    if (!socket.connected) {
+      socket.connect();
+    } else {
+      socket.emit('getOnlineCount');
+    }
 
     // Remove listeners on unmount so we don't stack duplicates on re-mount.
     return () => {

@@ -14,8 +14,9 @@ import '../styles/Card.css';
  *   onVerify     - run the mock AI verification (seller, pending ticket)
  *   onBuy        - purchase a verified/available ticket (other users)
  *   onRedeem     - mark the barcode as used (buyer, reserved ticket)
+ *   onEdit       - edit one of your own listings (sends it back for verification)
  */
-function Card({ ticket, seller, currentUser, onView, onVerify, onBuy, onRedeem, onViewSeller }) {
+function Card({ ticket, seller, currentUser, onView, onVerify, onBuy, onRedeem, onViewSeller, onEdit }) {
   const isOwner = currentUser && ticket.sellerId === currentUser.id;
   const isBuyer = currentUser && ticket.buyerId === currentUser.id;
   const isStaff = currentUser && (currentUser.role === 'admin' || currentUser.role === 'manager');
@@ -113,6 +114,11 @@ function Card({ ticket, seller, currentUser, onView, onVerify, onBuy, onRedeem, 
           {onView && (
             <button className="ticket-btn btn-ghost" onClick={() => onView(ticket)}>
               Details
+            </button>
+          )}
+          {isOwner && onEdit && (
+            <button className="ticket-btn btn-edit" onClick={() => onEdit(ticket)}>
+              Edit
             </button>
           )}
           {canVerify && onVerify && (
