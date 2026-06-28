@@ -49,6 +49,13 @@ function initSocket(httpServer) {
         // Tell everyone how many clients are currently online.
         io.emit("onlineCount", { count: io.engine.clientsCount });
 
+        // Let a client ask for the current online count on demand. The socket is
+        // a singleton with autoConnect, so a tab that is already connected when it
+        // opens the Live page never re-fires "connect"; this lets it pull the count.
+        socket.on("getOnlineCount", () => {
+            socket.emit("onlineCount", { count: io.engine.clientsCount });
+        });
+
         /**
          * Custom client -> server event. A client sends a short text message;
          * the server re-broadcasts it to ALL connected clients as "announcement".

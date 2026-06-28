@@ -187,6 +187,20 @@
   margin: 0 0 18px;
 }
 
+.form-modal-sub.form-warning {
+  color: #92400E;
+  background: #FEF3C7;
+  border: 1px solid #FCD34D;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+[data-theme="dark"] .form-modal-sub.form-warning {
+  color: #FCD34D;
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
 .ticket-form {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -317,6 +317,25 @@ const ticketController = {
                 });
             }
 
+            // Ownership check: a regular 'user' may edit only their own listing;
+            // admin/manager may edit any ticket. Identity comes from the
+            // simulated-auth headers set by the frontend.
+            const role = req.headers["x-user-role"];
+            const requesterId = parseInt(req.headers["x-user-id"], 10);
+            const isPrivileged = role === "admin" || role === "manager";
+
+            if (!isPrivileged && ticket.sellerId !== requesterId) {
+                return res.status(403).json({
+                    success: false,
+                    data: null,
+                    error: {
+                        code: "FORBIDDEN",
+                        message: "You can only edit your own ticket listings.",
+                        details: {}
+                    }
+                });
+            }
+
             const requiredFields = ["eventName", "eventType", "eventDate", "barcode", "salePrice", "sellerId"];
             const missing = getMissingFields(body, requiredFields);
 
@@ -350,17 +369,23 @@ const ticketController = {
                 ...body,
                 venue: body.venue || "Unknown venue",
                 originalPrice: body.originalPrice || body.salePrice,
+                // Any edit sends the ticket back through verification: it loses its
+                // verified flag and returns to "pending" until re-approved.
+                status: "pending",
+                verified: false,
                 updateDate: new Date()
             });
 
-            // Real-time: notify clients the listing changed.
+            // Real-time: notify clients the listing changed. After an edit the
+            // status is back to "pending" and verified is false.
             emitTicketUpdated({
                 ticketId: ticket.ticketId,
                 eventName: ticket.eventName,
                 eventType: ticket.eventType,
                 venue: ticket.venue,
                 salePrice: ticket.salePrice,
-                status: ticket.status
+                status: ticket.status,
+                verified: ticket.verified
             });
 
             return res.status(200).json({

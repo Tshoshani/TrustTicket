@@ -285,6 +285,9 @@
 .btn-redeem { background: var(--tt-primary); color: #fff; }
 .btn-redeem:hover { background: var(--tt-primary-dark); }
 
+.btn-edit { background: #F59E0B; color: #fff; }
+.btn-edit:hover { background: #D97706; }
+
 /* Dark theme tweaks */
 [data-theme="dark"] .ticket-card { background: #21252e; border-color: #333a45; }
 [data-theme="dark"] .ticket-top { background: #21252e; }
